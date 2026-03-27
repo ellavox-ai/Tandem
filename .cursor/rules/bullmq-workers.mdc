@@ -1,0 +1,60 @@
+---
+description: BullMQ job queue, worker process, and notification patterns
+globs: "**/{jobs,worker,notifications}/**/*.ts"
+alwaysApply: false
+---
+
+# BullMQ Queue & Worker Patterns
+
+## Architecture
+
+- Queue definitions and enqueue helpers: `src/lib/jobs/queue.ts`
+- Job processors: `src/lib/jobs/processors.ts`
+- Worker entry point: `src/worker.ts` (standalone, runs via `npm run worker`)
+- Redis connection is lazy-initialized and shared across queues
+
+## Worker Entry Point
+
+The worker runs outside Next.js, so it manually loads dotenv (`.env.local` first, then `.env`):
+
+```typescript
+import dotenv from "dotenv";
+dotenv.config({ path: resolve(root, ".env.local") });
+dotenv.config({ path: resolve(root, ".env") });
+```
+
+Graceful shutdown handlers are required — close all workers on SIGINT/SIGTERM:
+
+```typescript
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+```
+
+## Job Types
+
+| Job | Trigger | Purpose |
+|-----|---------|---------|
+| `process-transcript` | Webhook / upload | Extract tasks from transcript via Claude |
+| `create-jira` | Auto-created or interview complete | Push task to Jira with requirements refinement |
+| `maintenance` | Scheduled (`upsertJobScheduler`) | Expire stale claims, clean up interviews |
+
+## Retry & Backoff
+
+- Default: 3 retries with exponential backoff (1s, 4s, 16s)
+- Jira jobs respect `X-RateLimit-Remaining` headers
+- Concurrency limit of 5 for Claude API calls
+- Failed jobs surface in dashboard for manual retry
+
+## Notifications
+
+After processing, send Slack notifications via `lib/services/notifications.ts`:
+- `notifyNewInterviews()` — posts Block Kit message with interview count and queue link
+- `notifyAutoCreatedTasks()` — posts links to created Jira issues
+- Both gracefully skip if `SLACK_WEBHOOK_URL` is not configured
+
+## Processor Rules
+
+- Must be **idempotent** — jobs may be retried
+- Keep processors thin — delegate to service functions in `lib/services/`
+- Log job start, completion, and failure with structured Pino fields
+- Use narrow try/catch — let BullMQ handle retries for transient failures

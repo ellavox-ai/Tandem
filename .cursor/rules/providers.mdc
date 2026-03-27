@@ -1,0 +1,54 @@
+---
+description: Transcript provider adapter pattern for adding new sources
+globs: "**/providers/**/*.ts"
+alwaysApply: false
+---
+
+# Transcript Provider Pattern
+
+## Architecture
+
+All transcript sources implement `TranscriptProviderAdapter` from `lib/providers/base.ts` and register via `registerProvider()`. The pipeline never touches provider-specific logic — only the normalized `NormalizedTranscript` format.
+
+## Adding a New Provider
+
+1. Create `src/lib/providers/my-source.ts`
+2. Implement the `TranscriptProviderAdapter` interface
+3. Call `registerProvider(myProvider)` at module level
+4. Add a webhook route at `src/app/api/webhooks/my-source/route.ts`
+
+```typescript
+import { registerProvider, type TranscriptProviderAdapter } from "./base";
+import type { NormalizedTranscript } from "@/lib/types";
+
+const myProvider: TranscriptProviderAdapter = {
+  name: "my-source",
+
+  async initialize(config) { /* one-time setup */ },
+  async startListening() { /* begin watching */ },
+  async stopListening() { /* cleanup */ },
+
+  validateWebhook(headers, body) {
+    return headers["x-webhook-secret"] === process.env.WEBHOOK_SECRET;
+  },
+
+  parseWebhook(body) {
+    // Extract external ID from webhook payload
+    return { externalId: (body as { id: string }).id };
+  },
+
+  async fetchTranscript(externalId): Promise<NormalizedTranscript> {
+    // Fetch and normalize into common format
+    return { provider: "my-source", externalId, /* ... */ };
+  },
+};
+
+registerProvider(myProvider);
+```
+
+## Key Rules
+
+- All provider-specific parsing stays inside the adapter — never leak raw formats downstream
+- Deduplication is handled by the ingestion service via `(provider, external_id)` unique constraint
+- Add the provider name to the `TranscriptProvider` union type in `lib/types/index.ts`
+- Add it to `active_providers` config for the setup page to recognize it

@@ -1,0 +1,53 @@
+{
+  "name": "orchaestaror",
+  "version": "1.0.0",
+  "description": "Ellavox Meeting Intelligence Pipeline",
+  "scripts": {
+    "dev": "next dev",
+    "build": "vitest run && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "worker": "npx tsx src/worker.ts",
+    "dev:all": "./scripts/dev.sh",
+    "stop": "./scripts/stop.sh",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "Ellavox",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.64",
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.100.0",
+    "ai": "^6.0.138",
+    "bullmq": "^5.71.0",
+    "dotenv": "^17.3.1",
+    "ioredis": "^5.10.1",
+    "next": "^16.2.1",
+    "pino": "^10.3.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "server-only": "^0.0.1",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "husky": "^9.1.7",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.2"
+  }
+}

@@ -1,0 +1,182 @@
+import { generateText, Output } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { extractionOutputSchema } from "./schemas";
+import type { ExtractionOutput } from "./schemas";
+import type {
+  NormalizedTranscript,
+  ExtractedTask,
+  ExtractionResult,
+} from "@/lib/types";
+
+const log = logger.child({ service: "extraction-agent" });
+
+const EXTRACTION_INSTRUCTIONS = `You are a meeting action item extractor. Analyze the meeting transcript below and extract all action items, tasks, and commitments discussed.
+
+For each task, provide:
+- title: A concise, actionable title (imperative mood, e.g., "Ship AppFolio webhook integration")
+- description: Full context from the discussion — what was discussed, why it matters, any constraints mentioned
+- inferredAssignees: Array of people who should own this. Include name and email if identifiable. For multi-person tasks, include all people mentioned.
+- confidence: "high" | "medium" | "low"
+  - high: Clear owner, specific deliverable, timeline mentioned (e.g., "Sean will ship the webhook by Friday")
+  - medium: Action discussed but owner or scope is ambiguous (e.g., "Someone should look into the latency issue")
+  - low: Vague reference to future work, no clear owner or deliverable (e.g., "We should think about scaling")
+- missingContext: Array of specific questions you couldn't answer from the transcript. Be precise — these will be asked to a human.
+  Examples: "Who should own this?", "What's the deadline?", "Which service is affected?", "Is this blocked on anything?"
+- sourceQuotes: Array of relevant excerpts from the transcript with approximate timestamps. Include the most relevant 1-3 quotes.
+- priority: "P0" (critical/urgent) | "P1" (high) | "P2" (medium/default) | "P3" (low/nice-to-have)
+- labels: Suggested categorization labels (e.g., "backend", "frontend", "infrastructure", "bug", "feature")
+
+Rules:
+- Only extract genuine action items. Skip casual conversation, jokes, and social chat.
+- If the same action item is mentioned multiple times, consolidate into a single task with the most complete context.
+- Handle noisy transcripts gracefully — speaker misattribution and filler words are common. Focus on the content, not who said it exactly.
+- If a task references ongoing work from a previous meeting (e.g., "still working on X"), skip it unless there's a new action or change in scope.
+- Be conservative with "high" confidence — only use it when owner AND deliverable AND timeline are all clear.
+- If no action items are found, return an empty tasks array.`;
+
+
+interface ExistingTask {
+  key: string;
+  summary: string;
+}
+
+export async function extractTasks(
+  transcript: NormalizedTranscript,
+  transcriptId: string,
+  existingJiraTasks?: ExistingTask[]
+): Promise<ExtractionResult> {
+  const startTime = Date.now();
+
+  const formattedTranscript = formatTranscript(transcript);
+
+  let contextBlock = "";
+  if (existingJiraTasks?.length) {
+    contextBlock = `\n\nExisting Jira tasks from recent/recurring meetings (skip if already tracked):\n${existingJiraTasks.map((t) => `- ${t.key}: ${t.summary}`).join("\n")}\n`;
+  }
+
+  const userMessage = `Meeting: ${transcript.meetingTitle}
+Date: ${transcript.meetingDate.toISOString()}
+Attendees: ${transcript.attendees.map((a) => a.name + (a.email ? ` <${a.email}>` : "")).join(", ")}
+Duration: ${Math.round(transcript.duration / 60)} minutes
+${contextBlock}
+--- TRANSCRIPT ---
+${formattedTranscript}
+--- END TRANSCRIPT ---
+
+Extract all action items.`;
+
+  log.info(
+    { transcriptId, utteranceCount: transcript.utterances.length },
+    "Starting task extraction"
+  );
+
+  const { output } = await generateText({
+    model: anthropic("claude-sonnet-4-20250514"),
+    system: EXTRACTION_INSTRUCTIONS,
+    prompt: userMessage,
+    output: Output.object({ schema: extractionOutputSchema }),
+  });
+
+  const extraction = output ?? { tasks: [] };
+  const tasks = extraction.tasks.map(mapToExtractedTask);
+  const processingTimeMs = Date.now() - startTime;
+
+  log.info(
+    { transcriptId, taskCount: tasks.length, processingTimeMs },
+    "Task extraction complete"
+  );
+
+  return { tasks, transcriptId, processingTimeMs };
+}
+
+/** @internal Exported for testing */
+export function mapToExtractedTask(
+  item: ExtractionOutput["tasks"][number]
+): ExtractedTask {
+  return {
+    title: item.title,
+    description: item.description,
+    inferredAssignees: item.inferredAssignees.map((a) => ({
+      name: a.name,
+      email: a.email,
+    })),
+    confidence: item.confidence,
+    missingContext: item.missingContext,
+    sourceQuotes: item.sourceQuotes,
+    priority: item.priority,
+    labels: item.labels,
+  };
+}
+
+/** @internal Exported for testing */
+export function formatTranscript(transcript: NormalizedTranscript): string {
+  return transcript.utterances
+    .map((u) => {
+      const timestamp = formatTimestamp(u.startTime);
+      return `[${timestamp}] ${u.speaker}: ${u.text}`;
+    })
+    .join("\n");
+}
+
+/** @internal Exported for testing */
+export function formatTimestamp(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+/**
+ * Store extracted tasks in Supabase and route them based on confidence.
+ */
+export async function storeAndRouteExtractedTasks(
+  result: ExtractionResult,
+  autoCreateThreshold: string[] = ["high"]
+): Promise<string[]> {
+  const taskIds: string[] = [];
+
+  for (const task of result.tasks) {
+    const status = autoCreateThreshold.includes(task.confidence)
+      ? "auto_created"
+      : "pending_interview";
+
+    const { data, error } = await supabaseAdmin
+      .from("extracted_tasks")
+      .insert({
+        transcript_id: result.transcriptId,
+        extracted_title: task.title,
+        extracted_description: task.description,
+        inferred_assignees: task.inferredAssignees,
+        confidence: task.confidence,
+        missing_context: task.missingContext,
+        source_quotes: task.sourceQuotes,
+        priority: task.priority,
+        labels: task.labels,
+        status,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      log.error({ error, task: task.title }, "Failed to insert extracted task");
+      continue;
+    }
+
+    taskIds.push(data.id);
+    log.info(
+      {
+        taskId: data.id,
+        title: task.title,
+        confidence: task.confidence,
+        status,
+      },
+      "Task stored"
+    );
+  }
+
+  return taskIds;
+}

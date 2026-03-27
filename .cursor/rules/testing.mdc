@@ -1,0 +1,54 @@
+---
+description: Vitest testing patterns and conventions
+globs: "**/*.test.ts"
+alwaysApply: false
+---
+
+# Testing Conventions
+
+## Setup
+
+- **Framework:** Vitest with `globals: true` (no need to import `describe`/`it`/`expect`)
+- **Path alias:** `vite-tsconfig-paths` plugin resolves `@/` in tests
+- **Setup file:** `src/test/setup.ts` — mocks Pino logger and seeds all env vars
+- **Timeout:** 10s default per test
+
+## File Structure
+
+Tests are co-located next to the code they test:
+
+```
+src/lib/providers/__tests__/base.test.ts
+src/lib/agents/__tests__/extraction-agent.test.ts
+src/lib/services/__tests__/jira-helpers.test.ts
+```
+
+Fixtures (sample transcripts) live in `test/fixtures/`.
+
+## Mocking
+
+The logger is globally mocked in setup — don't re-mock it. For other mocks:
+
+```typescript
+import { vi } from "vitest";
+
+vi.mock("@/lib/supabase", () => ({
+  supabaseAdmin: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+    })),
+  },
+}));
+```
+
+## Best Practices
+
+- Mock external services (Supabase, Jira API, Claude) — never make real API calls
+- Test business logic in service functions, not through API routes
+- Use descriptive test names: `"should expire claims older than 30 minutes"`
+- Test error paths, not just happy paths
+- Run with `npx vitest` or `npx vitest run` for CI

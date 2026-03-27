@@ -1,0 +1,66 @@
+---
+description: Supabase client, database queries, and migration patterns
+globs: "**/{supabase,services,types}/**/*.{ts,sql}"
+alwaysApply: false
+---
+
+# Supabase & Database Patterns
+
+## Client Architecture
+
+- **Server-side:** `supabaseAdmin` from `@/lib/supabase` — uses service role key, bypasses RLS
+- **Client-side:** `createSupabaseClient(accessToken?)` — respects RLS, uses anon key
+- The admin client is lazy-initialized via a `Proxy` to avoid throwing during Next.js build-time page data collection. Don't change this pattern.
+
+## Query Patterns
+
+```typescript
+// Single row — always check error AND data
+const { data, error } = await supabaseAdmin
+  .from("extracted_tasks")
+  .select("*, transcript:transcripts(*)")
+  .eq("id", taskId)
+  .single();
+
+if (error || !data) throw new Error(`Task not found: ${taskId}`);
+
+// Insert with return
+const { data, error } = await supabaseAdmin
+  .from("extracted_tasks")
+  .insert({ transcript_id, extracted_title, status })
+  .select("id")
+  .single();
+```
+
+## Column Naming
+
+Database uses `snake_case`, TypeScript uses `camelCase`. Map at the service boundary:
+
+- DB: `extracted_title`, `inferred_assignees`, `missing_context`, `jira_issue_key`
+- TS: `title`, `inferredAssignees`, `missingContext`, `jiraIssueKey`
+
+## Config Keys
+
+Runtime config lives in the `pipeline_config` table. Always use `CONFIG_KEYS` from `lib/types/index.ts`:
+
+```typescript
+import { CONFIG_KEYS } from "@/lib/types";
+// CONFIG_KEYS.CONFIDENCE_AUTO_CREATE_THRESHOLD
+// CONFIG_KEYS.JIRA_PROJECT_ROUTES
+```
+
+## Tables
+
+| Table | Purpose |
+|-------|---------|
+| `transcripts` | Ingested transcripts with provider, status, metadata |
+| `extracted_tasks` | AI-extracted tasks with confidence, priority, Jira state |
+| `task_status_history` | Audit trail of all task state transitions |
+| `pipeline_config` | Runtime config (thresholds, routes, providers) |
+| `users` | Team members with Google/Jira/Slack IDs |
+
+## Migrations
+
+- Files in `supabase/migrations/` with numeric prefix (e.g., `005_add_feature.sql`)
+- Apply locally with `supabase db reset`
+- Test against local Supabase before committing

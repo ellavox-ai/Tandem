@@ -1,0 +1,56 @@
+---
+description: TypeScript coding standards and patterns
+globs: "**/*.ts"
+alwaysApply: false
+---
+
+# TypeScript Conventions
+
+## Style
+
+- Strict mode is on — no `any` unless absolutely necessary (prefer `unknown` + narrowing)
+- Use explicit return types on exported functions
+- Prefer `interface` for object shapes, `type` for unions/intersections
+- Use `const` by default, `let` only when reassignment is required
+
+## Error Handling
+
+Always catch errors with context. Never swallow silently.
+
+```typescript
+// ✅ Correct
+try {
+  await processTranscript(id);
+} catch (err) {
+  log.error({ err, transcriptId: id }, "Failed to process transcript");
+  throw new Error(`Transcript processing failed: ${id}`, { cause: err });
+}
+
+// ❌ Wrong
+try {
+  await processTranscript(id);
+} catch (e) {}
+```
+
+## Logging
+
+Use Pino child loggers with structured fields — never `console.log`.
+
+```typescript
+const log = logger.child({ service: "my-service" });
+log.info({ taskId, status }, "Task updated");
+log.error({ err, taskId }, "Failed to create Jira issue");
+```
+
+## Imports
+
+- Use `@/` alias for all project imports (e.g., `@/lib/types`, `@/lib/supabase`)
+- Group: external deps → `@/lib` → relative imports
+- Use `import type` for type-only imports
+
+## Patterns
+
+- Validate external data at boundaries with Zod schemas
+- Prefer `async/await` over raw promises
+- Use discriminated unions for state machines (task status, transcript status)
+- Keep functions focused — extract helpers for complex logic

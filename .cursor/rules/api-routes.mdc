@@ -1,0 +1,68 @@
+---
+description: Next.js API route handler conventions
+globs: "**/app/api/**/*.ts"
+alwaysApply: false
+---
+
+# API Route Conventions
+
+## Route Handler Structure
+
+Use Next.js App Router Route Handlers with named exports:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+
+const log = logger.child({ service: "api-tasks" });
+
+export async function GET(request: NextRequest) {
+  // ... handler logic
+  return NextResponse.json({ data }, { status: 200 });
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  // ... handler logic
+  return NextResponse.json({ success: true }, { status: 201 });
+}
+```
+
+## Webhook Endpoints
+
+- Path: `/api/webhooks/[provider]/route.ts`
+- Authenticate via `x-webhook-secret` or `Authorization: Bearer` header against `WEBHOOK_SECRET`
+- Validate payload, then enqueue via BullMQ — return 200 immediately (don't block on processing)
+- Each provider has an adapter in `lib/providers/` that normalizes the transcript format
+
+## Error Responses
+
+Return consistent JSON error shapes:
+
+```typescript
+if (!task) {
+  return NextResponse.json({ error: "Task not found" }, { status: 404 });
+}
+
+try {
+  // ...
+} catch (err) {
+  log.error({ err }, "Operation failed");
+  return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+}
+```
+
+## Dynamic Route Params
+
+In App Router, params come from the function signature:
+
+```typescript
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ taskId: string }> }
+) {
+  const { taskId } = await params;
+  // ...
+}
+```

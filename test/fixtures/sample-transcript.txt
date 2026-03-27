@@ -1,0 +1,19 @@
+Sean: Alright, let's get started. First up, the AppFolio webhook integration. Alex, where are we on that?
+Alex: I've got the basic handler working. Just need to add retry logic and write the tests. I can have it shipped by Friday.
+Sean: Perfect. Make sure we have error alerting in place before it goes live. Jordan, can you set up the Datadog monitors for that?
+Jordan: Yeah, I'll create the monitors and a runbook. Should have it done by Wednesday.
+Sean: Great. Next topic — we've been seeing some latency spikes in the transcript processing queue. Anyone looked into that?
+Alex: I noticed it too. It might be the Redis connection pooling. Someone should dig into the BullMQ config and see if we need to tune the concurrency settings.
+Sean: Jordan, can you take a look?
+Jordan: I can start on it but I'm not sure I'll have time this week with the monitoring work. Maybe next week?
+Sean: Let's make it a priority. If you can at least identify the root cause this week, that would be great.
+Jordan: Okay, I'll do the investigation this week and the fix next week.
+Sean: Also, we should probably think about scaling the worker processes at some point. When we hit 100 meetings a day, a single worker won't cut it.
+Alex: Yeah, we could look into horizontal scaling with Kubernetes. But that's more of a next-quarter thing.
+Sean: Agreed. Let's not block on that now. Last thing — the interview UI. I want to add a dismiss button so people can mark false positives. Alex, can you add that?
+Alex: Sure, should be straightforward. I'll get a PR up today.
+Sean: Awesome. Oh, one more thing — we need to update the onboarding docs to mention the new transcript upload feature. I'll handle that myself by end of week.
+Jordan: Should we also add Slack notifications when new interviews are queued?
+Sean: Good idea. Let's add that to the backlog. Not urgent but would be nice to have.
+Alex: I can probably squeeze that in next sprint.
+Sean: Cool. Alright, I think that covers everything. Let's sync again Thursday.

@@ -1,0 +1,37 @@
+---
+description: Ellavox domain context — pipeline stages, agents, and data flow
+alwaysApply: true
+---
+
+# Ellavox Domain Model
+
+## Pipeline Stages
+
+1. **Ingestion** — Webhooks or upload → deduplicate by `(provider, external_id)` → enqueue via BullMQ
+2. **Extraction** — Claude reads full transcript → returns structured tasks with confidence/priority
+3. **Confidence Routing** — High confidence → auto-create in Jira. Below threshold → interview queue.
+4. **Interview** — AI chat, voice (WebRTC), or manual form. Claims expire after 30 min. Interviews expire after 72h.
+5. **Requirements** — Claude refines task into Jira spec (title, type, ACs, story points, technical notes)
+6. **Routing** — Claude picks the right Jira project based on configured project routes
+7. **Jira Creation** — REST API v3, ADF description, assignee lookup, watchers for multi-assignee
+
+## AI Agents
+
+| Agent | Input | Output |
+|-------|-------|--------|
+| Extraction | Full transcript + metadata | Array of tasks with confidence, priority, missing context |
+| Interview | Task context + chat history | Follow-up questions → refined task via tool call |
+| Requirements | Raw task + interview data | Jira spec: title, issue type, ACs, story points |
+| Routing | Task details + project route descriptions | Project key + reasoning |
+
+## Key Domain Types
+
+- **Confidence:** `high` / `medium` / `low` — drives auto-create vs interview routing
+- **Priority:** `P0` through `P3`
+- **TaskStatus:** `pending_interview` → `claimed` → `completed` / `dismissed` / `expired` / `auto_created` / `jira_failed`
+- **TranscriptStatus:** `pending` → `processing` → `completed` / `failed`
+
+## Config Keys
+
+Runtime configuration is stored in `pipeline_config` table. Use `CONFIG_KEYS` from `lib/types/index.ts`:
+`confidence_auto_create_threshold`, `interview_expiry_hours`, `claim_timeout_minutes`, `jira_default_project`, `active_providers`, `jira_project_routes`

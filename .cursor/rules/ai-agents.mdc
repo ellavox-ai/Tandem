@@ -1,0 +1,61 @@
+---
+description: AI agent implementation patterns using Vercel AI SDK + Claude
+globs: "**/agents/**/*.ts"
+alwaysApply: false
+---
+
+# AI Agent Patterns
+
+## Architecture
+
+Four agents, each with one job: **Extraction** (transcript → tasks), **Interview** (clarify missing context), **Requirements** (task → Jira spec), **Routing** (task → project key).
+
+## Vercel AI SDK Usage
+
+Always use `generateText` with structured output via `Output.object`:
+
+```typescript
+import { generateText, Output } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const { output } = await generateText({
+  model: anthropic("claude-sonnet-4-20250514"),
+  system: SYSTEM_PROMPT,
+  prompt: userMessage,
+  output: Output.object({ schema: myZodSchema }),
+});
+```
+
+## Schema Conventions
+
+- All agent I/O schemas live in `lib/agents/schemas.ts`
+- Use Zod with `.describe()` on every field — these become part of the AI prompt
+- Export both the schema and the inferred type: `export type X = z.infer<typeof xSchema>`
+- Keep schemas flat where possible — nested objects only when semantically meaningful
+
+## Prompt Engineering
+
+- System prompts as `const` strings at module top
+- Be specific about output format expectations in the system prompt
+- Include concrete examples of good/bad output in confidence scoring
+- Use "Rules:" sections to set boundaries (skip casual chat, consolidate duplicates)
+- Pass full context: transcript + metadata + attendees + existing tasks
+
+## Null Safety
+
+Always handle cases where the AI returns unexpected output:
+
+```typescript
+const extraction = output ?? { tasks: [] };
+```
+
+## Performance Tracking
+
+Measure and log processing time for every agent call:
+
+```typescript
+const startTime = Date.now();
+// ... agent call ...
+const processingTimeMs = Date.now() - startTime;
+log.info({ taskCount, processingTimeMs }, "Extraction complete");
+```

@@ -1,0 +1,73 @@
+---
+description: React and Next.js App Router patterns
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# React & Next.js Patterns
+
+## App Router
+
+- Pages default to **Server Components** — only add `"use client"` when state/effects are needed
+- Layouts in `layout.tsx` provide shared chrome (`Sidebar` component, fixed 240px left margin)
+- API routes live in `src/app/api/` using Route Handlers (`route.ts`)
+- Use `NextResponse.json()` for API responses
+
+## Component Organization
+
+- Shared components in `src/components/` (e.g., `sidebar.tsx`)
+- Page-specific components stay in their page file or a sibling component file
+- Functional components only — no class components
+
+## Styling
+
+- Tailwind utility classes — no CSS modules, no styled-components, no Tailwind config file
+- Design tokens as CSS variables in `globals.css`:
+
+```css
+/* Use these — don't hardcode colors */
+var(--foreground)         /* primary text */
+var(--foreground-secondary) /* muted text */
+var(--background)         /* page background */
+var(--surface)            /* card/panel background */
+var(--border)             /* borders and dividers */
+var(--accent)             /* primary accent (blue) */
+var(--accent-hover)       /* accent hover state */
+```
+
+- Inline SVG icons (Heroicons-style) — no icon library dependency
+
+## Client Components
+
+```typescript
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+
+export default function TasksPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTasks = useCallback(async () => {
+    const res = await fetch("/api/tasks");
+    const data = await res.json();
+    setTasks(data.tasks);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchTasks(); }, [fetchTasks]);
+}
+```
+
+## Data Fetching
+
+- Client components: `fetch("/api/...")` to internal API routes
+- Server components: call Supabase directly (server-side client)
+- Custom hooks in `src/hooks/` for reusable stateful logic (realtime subscriptions, voice)
+
+## UI Principles
+
+- Loading skeletons, not spinners, for content areas
+- Empty states with actionable guidance
+- Tab patterns for filtering (e.g., task status tabs)
+- Expandable rows for detail views in tables

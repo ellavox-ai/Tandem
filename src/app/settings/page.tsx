@@ -1,0 +1,427 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function SettingsPage() {
+  return (
+    <div className="flex flex-col gap-6 animate-fade-in">
+      <div>
+        <h1 className="text-xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-[13px] text-[var(--foreground-secondary)]">
+          Configure how the pipeline routes and processes tasks.
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+        <div className="border-b border-[var(--border)] px-5 py-4">
+          <h2 className="text-[15px] font-semibold">Confidence Thresholds</h2>
+          <p className="text-[12px] text-[var(--foreground-tertiary)] mt-0.5">
+            Control which tasks skip the interview queue
+          </p>
+        </div>
+        <div className="px-5 py-5">
+          <ConfidenceThresholdControl />
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+        <div className="border-b border-[var(--border)] px-5 py-4">
+          <h2 className="text-[15px] font-semibold">Jira Project Routing</h2>
+          <p className="text-[12px] text-[var(--foreground-tertiary)] mt-0.5">
+            Define target projects and let AI route tasks automatically
+          </p>
+        </div>
+        <div className="px-5 py-5">
+          <JiraProjectRoutes />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Confidence Threshold Control ──────────────────────────────────────────
+
+function ConfidenceThresholdControl() {
+  const [threshold, setThreshold] = useState<string[]>(["high"]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((data) => {
+        const val = data.config?.confidence_auto_create_threshold;
+        if (Array.isArray(val)) setThreshold(val);
+        else if (typeof val === "string") {
+          try { setThreshold(JSON.parse(val)); } catch { /* keep default */ }
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const toggle = async (level: string) => {
+    const next = threshold.includes(level)
+      ? threshold.filter((l) => l !== level)
+      : [...threshold, level];
+    setThreshold(next);
+    setSaving(true);
+    setSaved(false);
+    try {
+      await fetch("/api/config/confidence_auto_create_threshold", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: next }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch { /* swallow */ }
+    finally { setSaving(false); }
+  };
+
+  const levels = [
+    {
+      id: "high",
+      label: "High",
+      description: "Clear owner, specific deliverable, timeline mentioned",
+      color: "var(--success)",
+    },
+    {
+      id: "medium",
+      label: "Medium",
+      description: "Action discussed but owner or scope is ambiguous",
+      color: "var(--warning)",
+    },
+    {
+      id: "low",
+      label: "Low",
+      description: "Vague reference to future work, no clear owner",
+      color: "var(--danger)",
+    },
+  ];
+
+  if (loading) {
+    return <div className="h-40 skeleton rounded-lg" />;
+  }
+
+  const interviewLevels = levels.filter((l) => !threshold.includes(l.id));
+  const autoLevels = levels.filter((l) => threshold.includes(l.id));
+
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-[13px] text-[var(--foreground-secondary)]">
+        Choose which confidence levels skip the human interview and get sent
+        straight to Jira. Everything else goes to the interview queue for review.
+      </p>
+
+      <div className="flex flex-col gap-2">
+        {levels.map((level) => {
+          const active = threshold.includes(level.id);
+          return (
+            <button
+              key={level.id}
+              onClick={() => toggle(level.id)}
+              disabled={saving}
+              className={`flex items-center gap-4 rounded-xl border px-4 py-3 text-left transition-all ${
+                active
+                  ? "border-[var(--border-accent)] bg-[var(--accent-glow)]"
+                  : "border-[var(--border)] bg-[var(--background-secondary)] hover:border-[var(--foreground-tertiary)]"
+              }`}
+            >
+              <div
+                className={`flex shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                  active
+                    ? "border-[var(--accent)] bg-[var(--accent)]"
+                    : "border-[var(--foreground-tertiary)]"
+                }`}
+                style={{ width: 18, height: 18 }}
+              >
+                {active && (
+                  <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex flex-1 items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: level.color }} />
+                    <span className="text-[13px] font-medium">{level.label} confidence</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-[var(--foreground-tertiary)]">{level.description}</p>
+                </div>
+                <span
+                  className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
+                  style={{
+                    backgroundColor: active ? "var(--accent-muted)" : "var(--warning-muted)",
+                    color: active ? "var(--accent)" : "var(--warning)",
+                  }}
+                >
+                  {active ? "Auto-create" : "Interview"}
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {saved && (
+        <p className="text-[11px] text-[var(--success)] animate-fade-in">
+          Saved — changes apply to the next transcript processed.
+        </p>
+      )}
+
+      <div className="rounded-lg bg-[var(--background-secondary)] border border-[var(--border-subtle)] p-3 text-[13px] text-[var(--foreground-secondary)]">
+        <strong className="text-[var(--foreground)]">Current behavior:</strong>{" "}
+        {autoLevels.length === 0 ? (
+          <>All tasks go through the interview queue before reaching Jira.</>
+        ) : autoLevels.length === 3 ? (
+          <>All tasks are auto-created in Jira. The interview queue is bypassed entirely.</>
+        ) : (
+          <>
+            <strong>{autoLevels.map((l) => l.label.toLowerCase()).join(" and ")}</strong>{" "}
+            confidence tasks auto-create in Jira.{" "}
+            <strong>{interviewLevels.map((l) => l.label.toLowerCase()).join(" and ")}</strong>{" "}
+            confidence tasks go through the interview queue.
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Jira Project Routes ──────────────────────────────────────────────────
+
+interface ProjectRoute {
+  projectKey: string;
+  name: string;
+  routingPrompt: string;
+  isDefault?: boolean;
+}
+
+function JiraProjectRoutes() {
+  const [routes, setRoutes] = useState<ProjectRoute[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((data) => {
+        const val = data.config?.jira_project_routes;
+        if (Array.isArray(val)) setRoutes(val);
+        else if (typeof val === "string") {
+          try { setRoutes(JSON.parse(val)); } catch { /* keep default */ }
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const persist = async (next: ProjectRoute[]) => {
+    setRoutes(next);
+    setSaving(true);
+    setSaved(false);
+    try {
+      await fetch("/api/config/jira_project_routes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: next }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch { /* swallow */ }
+    finally { setSaving(false); }
+  };
+
+  const addRoute = () => {
+    const next = [...routes, { projectKey: "", name: "", routingPrompt: "", isDefault: routes.length === 0 }];
+    setRoutes(next);
+    setEditingIdx(next.length - 1);
+  };
+
+  const removeRoute = (idx: number) => {
+    const removed = routes[idx];
+    let next = routes.filter((_, i) => i !== idx);
+    if (removed.isDefault && next.length > 0) {
+      next = next.map((r, i) => i === 0 ? { ...r, isDefault: true } : r);
+    }
+    setEditingIdx(null);
+    persist(next);
+  };
+
+  const updateRoute = (idx: number, patch: Partial<ProjectRoute>) => {
+    const next = routes.map((r, i) => i === idx ? { ...r, ...patch } : r);
+    setRoutes(next);
+  };
+
+  const setDefault = (idx: number) => {
+    const next = routes.map((r, i) => ({ ...r, isDefault: i === idx }));
+    persist(next);
+  };
+
+  const saveRoute = (idx: number) => {
+    const route = routes[idx];
+    if (!route.projectKey.trim() || !route.name.trim()) return;
+    setEditingIdx(null);
+    persist(routes);
+  };
+
+  if (loading) {
+    return <div className="h-32 skeleton rounded-lg" />;
+  }
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center justify-between">
+        <p className="text-[13px] text-[var(--foreground-secondary)]">
+          Define multiple Jira projects. AI routes tasks to the best match based on content.
+        </p>
+        <button
+          onClick={addRoute}
+          disabled={saving}
+          className="shrink-0 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-[var(--accent-hover)] transition-all disabled:opacity-40"
+        >
+          Add Project
+        </button>
+      </div>
+
+      {routes.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center">
+          <p className="text-[13px] text-[var(--foreground-tertiary)]">
+            No project routes configured. Tasks use <code className="text-[11px] font-mono text-[var(--accent)]">JIRA_DEFAULT_PROJECT</code>.
+          </p>
+          <button onClick={addRoute} className="mt-2 text-[12px] text-[var(--accent)] hover:underline">
+            Add your first project
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {routes.map((route, idx) => (
+            <div
+              key={idx}
+              className={`rounded-xl border px-4 py-3 transition-all ${
+                route.isDefault
+                  ? "border-[var(--border-accent)] bg-[var(--accent-glow)]"
+                  : "border-[var(--border)] bg-[var(--background-secondary)]"
+              }`}
+            >
+              {editingIdx === idx ? (
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] font-semibold text-[var(--foreground-tertiary)] uppercase tracking-wider">Project Key</label>
+                      <input
+                        type="text"
+                        value={route.projectKey}
+                        onChange={(e) => updateRoute(idx, { projectKey: e.target.value.toUpperCase() })}
+                        placeholder="ENG"
+                        className="mt-1 w-full font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-[var(--foreground-tertiary)] uppercase tracking-wider">Display Name</label>
+                      <input
+                        type="text"
+                        value={route.name}
+                        onChange={(e) => updateRoute(idx, { name: e.target.value })}
+                        placeholder="Engineering"
+                        className="mt-1 w-full"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-semibold text-[var(--foreground-tertiary)] uppercase tracking-wider">Routing Prompt</label>
+                    <textarea
+                      value={route.routingPrompt}
+                      onChange={(e) => updateRoute(idx, { routingPrompt: e.target.value })}
+                      placeholder="Describe what kinds of tasks belong in this project..."
+                      rows={2}
+                      className="mt-1 w-full resize-y rounded-xl"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => {
+                        if (!route.projectKey && !route.name) removeRoute(idx);
+                        else setEditingIdx(null);
+                      }}
+                      className="rounded-lg px-3 py-1 text-[11px] font-medium border border-[var(--border)] text-[var(--foreground-secondary)] hover:bg-[var(--surface-hover)] transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => saveRoute(idx)}
+                      disabled={!route.projectKey.trim() || !route.name.trim()}
+                      className="rounded-lg bg-[var(--accent)] px-3 py-1 text-[11px] font-semibold text-white hover:bg-[var(--accent-hover)] transition-all disabled:opacity-40"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-mono font-semibold text-[var(--accent)]">{route.projectKey}</span>
+                      <span className="text-[13px] text-[var(--foreground-secondary)]">{route.name}</span>
+                      {route.isDefault && (
+                        <span className="rounded-full bg-[var(--accent-muted)] px-2 py-0.5 text-[9px] font-semibold text-[var(--accent)] uppercase tracking-wider">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    {route.routingPrompt && (
+                      <p className="mt-1 text-[11px] text-[var(--foreground-tertiary)] line-clamp-2">{route.routingPrompt}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    {!route.isDefault && (
+                      <button
+                        onClick={() => setDefault(idx)}
+                        className="rounded-md px-2 py-1 text-[10px] font-medium text-[var(--foreground-tertiary)] hover:text-[var(--accent)] border border-[var(--border)] hover:border-[var(--border-accent)] transition-all"
+                      >
+                        Set Default
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setEditingIdx(idx)}
+                      className="rounded-md px-2 py-1 text-[11px] text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => removeRoute(idx)}
+                      disabled={routes.length === 1}
+                      className="rounded-md px-2 py-1 text-[11px] text-[var(--danger)] hover:bg-[var(--danger-muted)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {saved && (
+        <p className="text-[11px] text-[var(--success)] animate-fade-in">
+          Saved — routing changes apply to the next task processed.
+        </p>
+      )}
+
+      {routes.length > 1 && (
+        <div className="rounded-lg bg-[var(--background-secondary)] border border-[var(--border-subtle)] p-3 text-[13px] text-[var(--foreground-secondary)]">
+          <strong className="text-[var(--foreground)]">How routing works:</strong>{" "}
+          Claude reads each project&apos;s routing prompt and the task&apos;s
+          title, description, and labels to pick the best match. If no strong match is found,
+          the task goes to the default project.
+        </div>
+      )}
+    </div>
+  );
+}

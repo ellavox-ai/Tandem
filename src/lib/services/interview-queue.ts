@@ -1,0 +1,324 @@
+import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import type { ExtractedTaskRow, InterviewSubmission } from "@/lib/types";
+
+const log = logger.child({ service: "interview-queue" });
+
+/**
+ * Get pending interviews, sorted by relevance to the requesting user.
+ */
+export async function getPendingInterviews(
+  userEmail?: string
+): Promise<ExtractedTaskRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from("extracted_tasks")
+    .select("*, transcript:transcripts(*)")
+    .in("status", ["pending_interview", "claimed"])
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    log.error({ error }, "Failed to fetch pending interviews");
+    throw error;
+  }
+
+  if (!data) return [];
+
+  // Sort: user's meetings first, then by priority, then by recency
+  return sortInterviews(data, userEmail);
+}
+
+function sortInterviews(
+  tasks: ExtractedTaskRow[],
+  userEmail?: string
+): ExtractedTaskRow[] {
+  const priorityOrder: Record<string, number> = {
+    P0: 0,
+    P1: 1,
+    P2: 2,
+    P3: 3,
+  };
+
+  return tasks.sort((a, b) => {
+    // 1. User's meetings first
+    if (userEmail) {
+      const aIsUserMeeting = isUserMeeting(a, userEmail);
+      const bIsUserMeeting = isUserMeeting(b, userEmail);
+      if (aIsUserMeeting && !bIsUserMeeting) return -1;
+      if (!aIsUserMeeting && bIsUserMeeting) return 1;
+    }
+
+    // 2. By priority
+    const aPri = priorityOrder[a.priority] ?? 2;
+    const bPri = priorityOrder[b.priority] ?? 2;
+    if (aPri !== bPri) return aPri - bPri;
+
+    // 3. By recency (newest first)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+}
+
+function isUserMeeting(task: ExtractedTaskRow, userEmail: string): boolean {
+  const transcript = task.transcript;
+  if (!transcript?.attendees) return false;
+  return (transcript.attendees as Array<{ email?: string }>).some(
+    (a) => a.email === userEmail
+  );
+}
+
+/**
+ * Claim an interview. Returns the updated task or throws if already claimed.
+ */
+export async function claimInterview(
+  taskId: string,
+  userId: string,
+  timeoutMinutes: number = 30
+): Promise<ExtractedTaskRow> {
+  // Check current status
+  const { data: task, error: fetchError } = await supabaseAdmin
+    .from("extracted_tasks")
+    .select("*")
+    .eq("id", taskId)
+    .single();
+
+  if (fetchError || !task) {
+    throw new Error(`Task not found: ${taskId}`);
+  }
+
+  if (task.status === "claimed" && task.claimed_by !== userId) {
+    // Check if the claim has expired
+    if (task.claim_expires_at && new Date(task.claim_expires_at) > new Date()) {
+      throw new Error("This interview is already claimed by another team member");
+    }
+    // Claim has expired, allow re-claim
+  }
+
+  if (!["pending_interview", "claimed"].includes(task.status)) {
+    throw new Error(`Cannot claim task in status: ${task.status}`);
+  }
+
+  const claimExpiresAt = new Date(
+    Date.now() + timeoutMinutes * 60 * 1000
+  ).toISOString();
+
+  const { data: updated, error: updateError } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update({
+      status: "claimed",
+      claimed_by: userId,
+      claimed_at: new Date().toISOString(),
+      claim_expires_at: claimExpiresAt,
+    })
+    .eq("id", taskId)
+    .select("*")
+    .single();
+
+  if (updateError) {
+    log.error({ error: updateError, taskId }, "Failed to claim interview");
+    throw updateError;
+  }
+
+  log.info({ taskId, userId, claimExpiresAt }, "Interview claimed");
+  return updated;
+}
+
+/**
+ * Save partial interview responses (auto-save).
+ */
+export async function saveInterviewProgress(
+  taskId: string,
+  userId: string,
+  responses: Record<string, string>
+): Promise<void> {
+  // Verify the user owns the claim
+  const { data: task } = await supabaseAdmin
+    .from("extracted_tasks")
+    .select("claimed_by, status")
+    .eq("id", taskId)
+    .single();
+
+  if (!task || task.claimed_by !== userId) {
+    throw new Error("You do not have a claim on this interview");
+  }
+
+  if (task.status !== "claimed") {
+    throw new Error(`Cannot save progress for task in status: ${task.status}`);
+  }
+
+  const { error } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update({ interview_responses: responses })
+    .eq("id", taskId);
+
+  if (error) {
+    log.error({ error, taskId }, "Failed to save interview progress");
+    throw error;
+  }
+
+  log.info({ taskId }, "Interview progress saved");
+}
+
+/**
+ * Complete an interview and mark the task for Jira creation.
+ */
+export async function completeInterview(
+  taskId: string,
+  userId: string,
+  submission: InterviewSubmission
+): Promise<ExtractedTaskRow> {
+  const { data: task, error: fetchError } = await supabaseAdmin
+    .from("extracted_tasks")
+    .select("*")
+    .eq("id", taskId)
+    .single();
+
+  if (fetchError || !task) {
+    throw new Error(`Task not found: ${taskId}`);
+  }
+
+  if (task.claimed_by !== userId) {
+    throw new Error("You do not have a claim on this interview");
+  }
+
+  // Apply interview enrichments
+  const updates: Record<string, unknown> = {
+    status: "completed",
+    interview_responses: submission.responses,
+  };
+
+  if (submission.assignee) {
+    updates.inferred_assignees = [{ name: submission.assignee }];
+  }
+  if (submission.priority) {
+    updates.priority = submission.priority;
+  }
+  if (submission.labels) {
+    updates.labels = submission.labels;
+  }
+
+  const { data: updated, error: updateError } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update(updates)
+    .eq("id", taskId)
+    .select("*")
+    .single();
+
+  if (updateError) {
+    log.error({ error: updateError, taskId }, "Failed to complete interview");
+    throw updateError;
+  }
+
+  log.info({ taskId, userId }, "Interview completed");
+  return updated;
+}
+
+/**
+ * Dismiss a task as "not a real task".
+ */
+export async function dismissTask(
+  taskId: string,
+  userId: string,
+  reason?: string
+): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update({
+      status: "dismissed",
+      dismissed_reason: reason || null,
+      claimed_by: userId,
+    })
+    .eq("id", taskId);
+
+  if (error) {
+    log.error({ error, taskId }, "Failed to dismiss task");
+    throw error;
+  }
+
+  log.info({ taskId, userId, reason }, "Task dismissed");
+}
+
+/**
+ * Release a claim early (unclaim).
+ */
+export async function releaseClaim(
+  taskId: string,
+  userId: string
+): Promise<void> {
+  const { data: task } = await supabaseAdmin
+    .from("extracted_tasks")
+    .select("claimed_by")
+    .eq("id", taskId)
+    .single();
+
+  if (!task || task.claimed_by !== userId) {
+    throw new Error("You do not have a claim on this interview");
+  }
+
+  await supabaseAdmin
+    .from("extracted_tasks")
+    .update({
+      status: "pending_interview",
+      claimed_by: null,
+      claimed_at: null,
+      claim_expires_at: null,
+    })
+    .eq("id", taskId);
+
+  log.info({ taskId, userId }, "Claim released");
+}
+
+/**
+ * Expire stale claims (run periodically via BullMQ).
+ */
+export async function expireStaleClaims(): Promise<number> {
+  const { data, error } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update({
+      status: "pending_interview",
+      claimed_by: null,
+      claimed_at: null,
+      claim_expires_at: null,
+    })
+    .eq("status", "claimed")
+    .lt("claim_expires_at", new Date().toISOString())
+    .select("id");
+
+  if (error) {
+    log.error({ error }, "Failed to expire stale claims");
+    return 0;
+  }
+
+  const count = data?.length || 0;
+  if (count > 0) {
+    log.info({ count }, "Expired stale claims");
+  }
+  return count;
+}
+
+/**
+ * Expire old unclaimed interviews (run periodically via BullMQ).
+ */
+export async function expireOldInterviews(
+  expiryHours: number = 72
+): Promise<number> {
+  const cutoff = new Date(
+    Date.now() - expiryHours * 60 * 60 * 1000
+  ).toISOString();
+
+  const { data, error } = await supabaseAdmin
+    .from("extracted_tasks")
+    .update({ status: "expired" })
+    .eq("status", "pending_interview")
+    .lt("created_at", cutoff)
+    .select("id");
+
+  if (error) {
+    log.error({ error }, "Failed to expire old interviews");
+    return 0;
+  }
+
+  const count = data?.length || 0;
+  if (count > 0) {
+    log.info({ count, expiryHours }, "Expired old interviews");
+  }
+  return count;
+}

@@ -1,0 +1,15 @@
+1
+00:00:01,000 --> 00:00:05,000
+Sean: Alright, let's get started. First up, the AppFolio webhook integration.
+
+2
+00:00:06,000 --> 00:00:10,000
+Alex: I've got the basic handler working. Just need to add retry logic and write the tests.
+
+3
+00:00:11,000 --> 00:00:15,500
+Sean: Perfect. Make sure we have error alerting in place before it goes live.
+
+4
+00:00:16,000 --> 00:00:20,000
+Jordan: Yeah, I'll create the monitors and a runbook. Should have it done by Wednesday.

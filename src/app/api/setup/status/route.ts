@@ -1,0 +1,56 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
+import { apiError } from "@/lib/errors";
+
+export async function GET(request: NextRequest) {
+  try {
+    await requireAdmin(request);
+
+    const integrations: Record<
+      string,
+      { configured: boolean; label: string }
+    > = {
+      "google-meet": {
+        label: "Google Meet",
+        configured: Boolean(
+          process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+        ),
+      },
+      jira: {
+        label: "Jira",
+        configured: Boolean(
+          process.env.JIRA_BASE_URL &&
+            process.env.JIRA_EMAIL &&
+            process.env.JIRA_API_TOKEN
+        ),
+      },
+      anthropic: {
+        label: "Claude AI",
+        configured: Boolean(process.env.ANTHROPIC_API_KEY),
+      },
+      slack: {
+        label: "Slack",
+        configured: Boolean(process.env.SLACK_WEBHOOK_URL),
+      },
+      supabase: {
+        label: "Supabase",
+        configured: Boolean(
+          process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY
+        ),
+      },
+      redis: {
+        label: "Redis",
+        configured: Boolean(
+          process.env.REDIS_HOST || process.env.REDIS_URL
+        ),
+      },
+    };
+
+    return NextResponse.json({
+      integrations,
+      jiraBaseUrl: process.env.JIRA_BASE_URL?.replace(/\/+$/, "") || null,
+    });
+  } catch (err) {
+    return apiError(err, { route: "setup/status" });
+  }
+}
