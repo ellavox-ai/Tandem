@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "vitest run && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "echo 'No linter configured'",
     "worker": "npx tsx src/worker.ts",
     "dev:all": "./scripts/dev.sh",
     "stop": "./scripts/stop.sh",

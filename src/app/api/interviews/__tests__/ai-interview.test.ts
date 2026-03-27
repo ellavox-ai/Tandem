@@ -23,7 +23,6 @@ describe("POST /api/interviews/[taskId]/ai-interview", () => {
   it("returns 200 with message for start action", async () => {
     vi.mocked(startAIInterview).mockResolvedValue({
       message: "Hi! Can you tell me who should own this?",
-      context: "task context here",
     });
 
     const request = new NextRequest("http://localhost/api/interviews/task-1/ai-interview", {

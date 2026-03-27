@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { getProvider } from "@/lib/providers";
 import { ingestTranscript } from "@/lib/services/ingestion";
 import { enqueueTranscriptProcessing } from "@/lib/jobs/queue";
@@ -52,10 +53,10 @@ describe("POST /api/webhooks/[provider]", () => {
       id: "trans-abc",
       isDuplicate: false,
     });
-    vi.mocked(enqueueTranscriptProcessing).mockResolvedValue(undefined);
+    vi.mocked(enqueueTranscriptProcessing).mockResolvedValue("job-1");
 
     const response = await POST(
-      new Request("http://localhost/api/webhooks/google-meet", {
+      new NextRequest("http://localhost/api/webhooks/google-meet", {
         method: "POST",
         headers: { "x-webhook-secret": secret, "Content-Type": "application/json" },
         body: JSON.stringify({ event: "recording.completed" }),
@@ -77,7 +78,7 @@ describe("POST /api/webhooks/[provider]", () => {
     } as never);
 
     const response = await POST(
-      new Request("http://localhost/api/webhooks/google-meet", {
+      new NextRequest("http://localhost/api/webhooks/google-meet", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +98,7 @@ describe("POST /api/webhooks/[provider]", () => {
     vi.mocked(getProvider).mockReturnValue(undefined);
 
     const response = await POST(
-      new Request("http://localhost/api/webhooks/unknown", {
+      new NextRequest("http://localhost/api/webhooks/unknown", {
         method: "POST",
         headers: { "x-webhook-secret": secret, "Content-Type": "application/json" },
         body: JSON.stringify({}),
@@ -119,7 +120,7 @@ describe("POST /api/webhooks/[provider]", () => {
     vi.mocked(getProvider).mockReturnValue(mockProvider as never);
 
     const response = await POST(
-      new Request("http://localhost/api/webhooks/zoom", {
+      new NextRequest("http://localhost/api/webhooks/zoom", {
         method: "POST",
         headers: { "x-webhook-secret": secret, "Content-Type": "application/json" },
         body: JSON.stringify({ event: "endpoint.url_validation" }),

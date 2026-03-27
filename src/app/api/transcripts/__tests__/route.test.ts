@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { GET } from "../route";
 import { listTranscripts } from "@/lib/services/ingestion";
 
@@ -16,7 +17,7 @@ describe("GET /api/transcripts", () => {
     vi.mocked(listTranscripts).mockResolvedValue(rows);
 
     const response = await GET(
-      new Request("http://localhost/api/transcripts", { method: "GET" })
+      new NextRequest("http://localhost/api/transcripts", { method: "GET" })
     );
 
     expect(response.status).toBe(200);
@@ -29,7 +30,7 @@ describe("GET /api/transcripts", () => {
     vi.mocked(listTranscripts).mockResolvedValue([]);
 
     const response = await GET(
-      new Request("http://localhost/api/transcripts?status=completed&limit=10", {
+      new NextRequest("http://localhost/api/transcripts?status=completed&limit=10", {
         method: "GET",
       })
     );
@@ -43,7 +44,7 @@ describe("GET /api/transcripts", () => {
     vi.mocked(listTranscripts).mockRejectedValue(new Error("db down"));
 
     const response = await GET(
-      new Request("http://localhost/api/transcripts", { method: "GET" })
+      new NextRequest("http://localhost/api/transcripts", { method: "GET" })
     );
 
     expect(response.status).toBe(500);

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { GET } from "../route";
 import { PATCH } from "../[key]/route";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -29,7 +30,9 @@ describe("GET /api/config", () => {
     };
     vi.mocked(supabaseAdmin.from).mockReturnValue(chain as never);
 
-    const response = await GET();
+    const response = await GET(
+      new NextRequest("http://localhost/api/config")
+    );
 
     expect(response.status).toBe(200);
     const data = await response.json();
@@ -51,7 +54,9 @@ describe("GET /api/config", () => {
     };
     vi.mocked(supabaseAdmin.from).mockReturnValue(chain as never);
 
-    const response = await GET();
+    const response = await GET(
+      new NextRequest("http://localhost/api/config")
+    );
 
     expect(response.status).toBe(500);
     const data = await response.json();
@@ -79,7 +84,7 @@ describe("PATCH /api/config/[key]", () => {
     vi.mocked(supabaseAdmin.from).mockReturnValue(chain as never);
 
     const response = await PATCH(
-      new Request("http://localhost/api/config/max_tasks", {
+      new NextRequest("http://localhost/api/config/max_tasks", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value: 20, userId: "user-1" }),
@@ -96,7 +101,7 @@ describe("PATCH /api/config/[key]", () => {
 
   it("returns 400 when value is missing", async () => {
     const response = await PATCH(
-      new Request("http://localhost/api/config/max_tasks", {
+      new NextRequest("http://localhost/api/config/max_tasks", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: "user-1" }),
@@ -120,7 +125,7 @@ describe("PATCH /api/config/[key]", () => {
     vi.mocked(supabaseAdmin.from).mockReturnValue(chain as never);
 
     const response = await PATCH(
-      new Request("http://localhost/api/config/missing", {
+      new NextRequest("http://localhost/api/config/missing", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value: 1 }),

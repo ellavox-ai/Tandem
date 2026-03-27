@@ -22,7 +22,7 @@ describe("ManualProvider", () => {
 
   describe("fetchTranscript", () => {
     it("throws directing to parseUpload", async () => {
-      await expect(provider.fetchTranscript("any")).rejects.toThrow(
+      await expect(provider.fetchTranscript()).rejects.toThrow(
         "Use parseUpload instead"
       );
     });

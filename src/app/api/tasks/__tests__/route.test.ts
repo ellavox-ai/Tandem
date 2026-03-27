@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { GET } from "../route";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -33,7 +34,7 @@ describe("GET /api/tasks", () => {
     vi.mocked(supabaseAdmin.from).mockReturnValue(query as never);
 
     const response = await GET(
-      new Request("http://localhost/api/tasks", { method: "GET" })
+      new NextRequest("http://localhost/api/tasks", { method: "GET" })
     );
 
     expect(response.status).toBe(200);
@@ -53,7 +54,7 @@ describe("GET /api/tasks", () => {
     vi.mocked(supabaseAdmin.from).mockReturnValue(query as never);
 
     const response = await GET(
-      new Request("http://localhost/api/tasks", { method: "GET" })
+      new NextRequest("http://localhost/api/tasks", { method: "GET" })
     );
 
     expect(response.status).toBe(500);

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { GET } from "../stats/route";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -13,7 +14,7 @@ describe("GET /api/dashboard/stats", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(supabaseAdmin.rpc).mockImplementation((name: string) => {
+    vi.mocked(supabaseAdmin.rpc).mockImplementation(((name: string) => {
       if (name === "count_tasks_by_status") {
         return Promise.resolve({
           data: [{ status: "pending", count: 5 }],
@@ -27,9 +28,9 @@ describe("GET /api/dashboard/stats", () => {
         });
       }
       return Promise.resolve({ data: null, error: null });
-    });
+    }) as never);
 
-    vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => ({
+    vi.mocked(supabaseAdmin.from).mockImplementation(((table: string) => ({
       select: vi.fn((fields: string, opts?: { head?: boolean }) => {
         if (opts?.head) {
           if (table === "transcripts" && fields === "status") {
@@ -53,11 +54,13 @@ describe("GET /api/dashboard/stats", () => {
         }
         return {};
       }),
-    }));
+    })) as never);
   });
 
   it("returns 200 with totals, last24h, and breakdowns", async () => {
-    const response = await GET();
+    const response = await GET(
+      new NextRequest("http://localhost/api/dashboard/stats")
+    );
 
     expect(response.status).toBe(200);
     const data = await response.json();

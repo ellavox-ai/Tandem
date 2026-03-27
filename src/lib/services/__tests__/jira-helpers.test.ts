@@ -168,7 +168,7 @@ describe("buildRequirementsAdf", () => {
 
     const adf = buildRequirementsAdf(requirements);
     expect(adf.type).toBe("doc");
-    expect(adf.version).toBe(1);
+    expect((adf as { version: number }).version).toBe(1);
     const content = (adf as { content: unknown[] }).content;
     expect(content.length).toBe(2);
     expect((content[0] as { type: string }).type).toBe("paragraph");
