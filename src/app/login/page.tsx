@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,23 +11,30 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  const supabase = createClient();
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Sign in failed");
+        setLoading(false);
+        return;
+      }
+
       window.location.href = "/";
+    } catch {
+      setError("Network error — please try again.");
+      setLoading(false);
     }
   };
 
@@ -37,28 +43,33 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: displayName },
-      },
-    });
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, displayName }),
+      });
 
-    if (error) {
-      setError(error.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Sign up failed");
+        setLoading(false);
+        return;
+      }
+
+      // If session was created immediately (email auto-confirmed), redirect
+      if (data.session) {
+        window.location.href = "/";
+        return;
+      }
+
+      setMessage("Check your email to confirm your account.");
       setLoading(false);
-      return;
+    } catch {
+      setError("Network error — please try again.");
+      setLoading(false);
     }
-
-    // If user is confirmed immediately (local dev), redirect
-    if (data.session) {
-      window.location.href = "/";
-      return;
-    }
-
-    setMessage("Check your email to confirm your account.");
-    setLoading(false);
   };
 
   return (
