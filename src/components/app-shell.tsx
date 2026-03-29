@@ -11,7 +11,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
   if (isPublic) {
-    return <>{children}</>;
+    // Full-width wrapper so login page can center itself
+    return <div className="w-full">{children}</div>;
   }
 
   return (

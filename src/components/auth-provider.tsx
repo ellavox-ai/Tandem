@@ -35,26 +35,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
-  const fetchProfile = async (authUser: User) => {
-    const { data } = await supabase
-      .from("users")
-      .select("id, email, display_name, role")
-      .eq("id", authUser.id)
-      .single();
-    if (data) setProfile(data);
+  const fetchProfile = async (authUser: User): Promise<UserProfile | null> => {
+    try {
+      const { data } = await supabase
+        .from("users")
+        .select("id, email, display_name, role")
+        .eq("id", authUser.id)
+        .single();
+
+      if (data) {
+        setProfile(data);
+        return data;
+      }
+
+      // No profile row yet (trigger may not have fired) — build a fallback
+      // from the auth user metadata so the app isn't blocked.
+      const fallback: UserProfile = {
+        id: authUser.id,
+        email: authUser.email ?? "",
+        display_name:
+          authUser.user_metadata?.display_name ??
+          authUser.email?.split("@")[0] ??
+          "User",
+        role: "member",
+      };
+      setProfile(fallback);
+      return fallback;
+    } catch {
+      // Supabase query failed — use fallback
+      const fallback: UserProfile = {
+        id: authUser.id,
+        email: authUser.email ?? "",
+        display_name:
+          authUser.user_metadata?.display_name ??
+          authUser.email?.split("@")[0] ??
+          "User",
+        role: "member",
+      };
+      setProfile(fallback);
+      return fallback;
+    }
   };
 
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
-      setUser(authUser);
+      try {
+        const {
+          data: { user: authUser },
+        } = await supabase.auth.getUser();
 
-      if (authUser) {
-        await fetchProfile(authUser);
-      } else {
-        // Not authenticated — redirect to login
+        if (authUser) {
+          setUser(authUser);
+          await fetchProfile(authUser);
+        } else {
+          // Not authenticated — redirect to login
+          window.location.href = "/login";
+          return;
+        }
+      } catch {
+        // Auth check failed — redirect to login
         window.location.href = "/login";
         return;
       }
@@ -107,7 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               />
             </svg>
           </div>
-          <p className="text-[13px] text-[var(--foreground-tertiary)]">Loading...</p>
+          <p className="text-[13px] text-[var(--foreground-tertiary)]">
+            Loading...
+          </p>
         </div>
       </div>
     );
