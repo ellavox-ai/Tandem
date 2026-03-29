@@ -81,7 +81,7 @@ export default function TasksPage() {
   const [jiraBaseUrl, setJiraBaseUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/setup/status")
+    fetch("/api/config/jira-base-url")
       .then((r) => r.json())
       .then((data) => { if (data.jiraBaseUrl) setJiraBaseUrl(data.jiraBaseUrl); })
       .catch(() => {});

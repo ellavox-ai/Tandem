@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { requireAdmin } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { apiError } from "@/lib/errors";
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAdmin(request);
+    await requireAuth(request);
 
     const { data, error } = await supabaseAdmin
       .from("pipeline_config")

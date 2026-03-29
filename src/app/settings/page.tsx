@@ -226,14 +226,19 @@ function JiraProjectRoutes() {
     setSaving(true);
     setSaved(false);
     try {
-      await fetch("/api/config/jira_project_routes", {
+      const res = await fetch("/api/config/jira_project_routes", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value: next }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Failed to save routes:", err);
+        return;
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch { /* swallow */ }
+    } catch (err) { console.error("Failed to save routes:", err); }
     finally { setSaving(false); }
   };
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "./auth-provider";
 
 const NAV_ITEMS = [
   {
@@ -72,6 +73,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { profile, signOut } = useAuth();
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-[240px] border-r border-[var(--border)] bg-[var(--background-secondary)] flex flex-col z-40">
@@ -118,12 +120,38 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-4 py-4 border-t border-[var(--border)]">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse-dot" />
-          <span className="text-[11px] text-[var(--foreground-tertiary)]">Pipeline Active</span>
-        </div>
+      {/* User / Footer */}
+      <div className="px-3 py-3 border-t border-[var(--border)]">
+        {profile ? (
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[var(--accent-muted)] flex items-center justify-center text-[13px] font-semibold text-[var(--accent)] shrink-0">
+              {profile.display_name
+                .split(" ")
+                .map((w) => w[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium truncate">{profile.display_name}</p>
+              <p className="text-[10px] text-[var(--foreground-tertiary)] truncate">{profile.email}</p>
+            </div>
+            <button
+              onClick={signOut}
+              title="Sign out"
+              className="shrink-0 rounded-md p-1.5 text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse-dot" />
+            <span className="text-[11px] text-[var(--foreground-tertiary)]">Pipeline Active</span>
+          </div>
+        )}
       </div>
     </aside>
   );

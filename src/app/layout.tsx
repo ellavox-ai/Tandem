@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 export const metadata: Metadata = {
   title: "Ellavox — Meeting Intelligence Pipeline",
@@ -15,12 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen flex">
-        <Sidebar />
-        <main className="flex-1 ml-[240px] min-h-screen">
-          <div className="max-w-6xl mx-auto px-8 py-8">
-            {children}
-          </div>
-        </main>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

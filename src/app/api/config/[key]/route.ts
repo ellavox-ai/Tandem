@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { requireAdmin } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { apiError, NotFoundError } from "@/lib/errors";
 import { parseBody, configUpdateBody } from "@/lib/validation";
 
@@ -9,7 +9,7 @@ export async function PATCH(
   { params }: { params: Promise<{ key: string }> }
 ) {
   try {
-    const user = await requireAdmin(request);
+    const user = await requireAuth(request);
     const { key } = await params;
 
     const body = await request.json();
@@ -17,13 +17,12 @@ export async function PATCH(
 
     const { data, error } = await supabaseAdmin
       .from("pipeline_config")
-      .update({ value, updated_by: user.id })
-      .eq("key", key)
+      .upsert({ key, value, updated_by: user.id }, { onConflict: "key" })
       .select("*")
       .single();
 
     if (error || !data) {
-      throw new NotFoundError("Config key not found");
+      throw new NotFoundError(`Failed to save config key "${key}"`);
     }
 
     return NextResponse.json({ config: data });
