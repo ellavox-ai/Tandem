@@ -64,7 +64,7 @@ async function fetchProjectRoutes(): Promise<ProjectRoute[]> {
   const { data } = await supabaseAdmin
     .from("pipeline_config")
     .select("value")
-    .eq("key", "jira_project_routes")
+    .eq("key", "project_routes")
     .single();
 
   if (!data?.value) return [];
@@ -75,7 +75,7 @@ async function fetchProjectRoutes(): Promise<ProjectRoute[]> {
       : data.value;
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    log.warn("Failed to parse jira_project_routes config");
+    log.warn("Failed to parse project_routes config");
     return [];
   }
 }

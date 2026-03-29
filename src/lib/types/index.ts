@@ -160,5 +160,5 @@ export const CONFIG_KEYS = {
   ACTIVE_PROVIDERS: "active_providers",
   NOTIFICATION_CHANNELS: "notification_channels",
   DUPLICATE_SIMILARITY_THRESHOLD: "duplicate_similarity_threshold",
-  JIRA_PROJECT_ROUTES: "jira_project_routes",
+  PROJECT_ROUTES: "project_routes",
 } as const;

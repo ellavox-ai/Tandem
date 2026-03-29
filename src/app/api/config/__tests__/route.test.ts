@@ -73,11 +73,10 @@ describe("PATCH /api/config/[key]", () => {
     const row = {
       key: "max_tasks",
       value: 20,
-      updated_by: "user-1",
+      updated_by: "test-user-id",
     };
     const chain = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: row, error: null }),
     };
@@ -87,7 +86,7 @@ describe("PATCH /api/config/[key]", () => {
       new NextRequest("http://localhost/api/config/max_tasks", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: 20, userId: "user-1" }),
+        body: JSON.stringify({ value: 20 }),
       }),
       { params: Promise.resolve({ key: "max_tasks" }) }
     );
@@ -95,8 +94,10 @@ describe("PATCH /api/config/[key]", () => {
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(data).toEqual({ config: row });
-    expect(chain.update).toHaveBeenCalledWith({ value: 20, updated_by: "test-user-id" });
-    expect(chain.eq).toHaveBeenCalledWith("key", "max_tasks");
+    expect(chain.upsert).toHaveBeenCalledWith(
+      { key: "max_tasks", value: 20, updated_by: "test-user-id" },
+      { onConflict: "key" }
+    );
   });
 
   it("returns 400 when value is missing", async () => {
@@ -117,8 +118,7 @@ describe("PATCH /api/config/[key]", () => {
 
   it("returns 404 when the config key is not found", async () => {
     const chain = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
     };
@@ -135,6 +135,8 @@ describe("PATCH /api/config/[key]", () => {
 
     expect(response.status).toBe(404);
     const data = await response.json();
-    expect(data).toEqual({ error: "Config key not found" });
+    expect(data).toEqual({
+      error: 'Failed to save config key "missing"',
+    });
   });
 });

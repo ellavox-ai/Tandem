@@ -51,7 +51,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   },
   {
     id: "pushed",
-    label: "In Jira",
+    label: "Tracked",
     icon: (
       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -78,12 +78,12 @@ export default function TasksPage() {
   const [pushResults, setPushResults] = useState<
     Record<string, { ok: boolean; message: string }>
   >({});
-  const [jiraBaseUrl, setJiraBaseUrl] = useState<string | null>(null);
+  const [trackerBaseUrl, setTrackerBaseUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/config/jira-base-url")
       .then((r) => r.json())
-      .then((data) => { if (data.jiraBaseUrl) setJiraBaseUrl(data.jiraBaseUrl); })
+      .then((data) => { if (data.jiraBaseUrl) setTrackerBaseUrl(data.jiraBaseUrl); })
       .catch(() => {});
   }, []);
 
@@ -192,7 +192,7 @@ export default function TasksPage() {
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Tasks</h1>
           <p className="text-[13px] text-[var(--foreground-secondary)] mt-1">
-            Review extracted tasks and push to Jira
+            Review extracted tasks and push to your issue tracker
           </p>
         </div>
         {(activeTab === "completed" || activeTab === "auto_created") &&
@@ -255,7 +255,7 @@ export default function TasksPage() {
               pushing={pushingTasks.has(task.id)}
               pushResult={pushResults[task.id]}
               onPush={() => pushToJira(task.id)}
-              jiraBaseUrl={jiraBaseUrl}
+              trackerBaseUrl={trackerBaseUrl}
             />
           ))}
         </div>
@@ -271,7 +271,7 @@ function TaskCard({
   pushing,
   pushResult,
   onPush,
-  jiraBaseUrl,
+  trackerBaseUrl,
 }: {
   task: Task;
   expanded: boolean;
@@ -279,7 +279,7 @@ function TaskCard({
   pushing: boolean;
   pushResult?: { ok: boolean; message: string };
   onPush: () => void;
-  jiraBaseUrl: string | null;
+  trackerBaseUrl: string | null;
 }) {
   return (
     <div
@@ -335,11 +335,11 @@ function TaskCard({
         <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
           {task.jira_issue_key ? (
             <a
-              href={jiraBaseUrl ? `${jiraBaseUrl}/browse/${task.jira_issue_key}` : "#"}
+              href={trackerBaseUrl ? `${trackerBaseUrl}/browse/${task.jira_issue_key}` : "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[var(--success-muted)] text-[var(--success)] hover:bg-[var(--success)] hover:text-[var(--foreground-inverted)] transition-all"
-              title={jiraBaseUrl ? `Open ${task.jira_issue_key} in Jira` : task.jira_issue_key}
+              title={trackerBaseUrl ? `Open ${task.jira_issue_key}` : task.jira_issue_key}
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -375,7 +375,7 @@ function TaskCard({
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
-                  Push to Jira
+                  Create Issue
                 </>
               )}
             </button>

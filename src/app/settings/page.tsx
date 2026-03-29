@@ -26,13 +26,13 @@ export default function SettingsPage() {
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
         <div className="border-b border-[var(--border)] px-5 py-4">
-          <h2 className="text-[15px] font-semibold">Jira Project Routing</h2>
+          <h2 className="text-[15px] font-semibold">Project Routing</h2>
           <p className="text-[12px] text-[var(--foreground-tertiary)] mt-0.5">
             Define target projects and let AI route tasks automatically
           </p>
         </div>
         <div className="px-5 py-5">
-          <JiraProjectRoutes />
+          <ProjectRoutes />
         </div>
       </div>
     </div>
@@ -112,7 +112,7 @@ function ConfidenceThresholdControl() {
     <div className="flex flex-col gap-5">
       <p className="text-[13px] text-[var(--foreground-secondary)]">
         Choose which confidence levels skip the human interview and get sent
-        straight to Jira. Everything else goes to the interview queue for review.
+        straight to your issue tracker. Everything else goes to the interview queue for review.
       </p>
 
       <div className="flex flex-col gap-2">
@@ -175,13 +175,13 @@ function ConfidenceThresholdControl() {
       <div className="rounded-lg bg-[var(--background-secondary)] border border-[var(--border-subtle)] p-3 text-[13px] text-[var(--foreground-secondary)]">
         <strong className="text-[var(--foreground)]">Current behavior:</strong>{" "}
         {autoLevels.length === 0 ? (
-          <>All tasks go through the interview queue before reaching Jira.</>
+          <>All tasks go through the interview queue before being created.</>
         ) : autoLevels.length === 3 ? (
-          <>All tasks are auto-created in Jira. The interview queue is bypassed entirely.</>
+          <>All tasks are auto-created. The interview queue is bypassed entirely.</>
         ) : (
           <>
             <strong>{autoLevels.map((l) => l.label.toLowerCase()).join(" and ")}</strong>{" "}
-            confidence tasks auto-create in Jira.{" "}
+            confidence tasks are auto-created.{" "}
             <strong>{interviewLevels.map((l) => l.label.toLowerCase()).join(" and ")}</strong>{" "}
             confidence tasks go through the interview queue.
           </>
@@ -191,7 +191,7 @@ function ConfidenceThresholdControl() {
   );
 }
 
-// ─── Jira Project Routes ──────────────────────────────────────────────────
+// ─── Project Routes ──────────────────────────────────────────────────────
 
 interface ProjectRoute {
   projectKey: string;
@@ -200,7 +200,7 @@ interface ProjectRoute {
   isDefault?: boolean;
 }
 
-function JiraProjectRoutes() {
+function ProjectRoutes() {
   const [routes, setRoutes] = useState<ProjectRoute[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -211,7 +211,7 @@ function JiraProjectRoutes() {
     fetch("/api/config")
       .then((r) => r.json())
       .then((data) => {
-        const val = data.config?.jira_project_routes;
+        const val = data.config?.project_routes;
         if (Array.isArray(val)) setRoutes(val);
         else if (typeof val === "string") {
           try { setRoutes(JSON.parse(val)); } catch { /* keep default */ }
@@ -226,7 +226,7 @@ function JiraProjectRoutes() {
     setSaving(true);
     setSaved(false);
     try {
-      const res = await fetch("/api/config/jira_project_routes", {
+      const res = await fetch("/api/config/project_routes", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value: next }),
@@ -283,7 +283,7 @@ function JiraProjectRoutes() {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <p className="text-[13px] text-[var(--foreground-secondary)]">
-          Define multiple Jira projects. AI routes tasks to the best match based on content.
+          Define target projects. AI routes tasks to the best match based on content.
         </p>
         <button
           onClick={addRoute}
@@ -297,7 +297,7 @@ function JiraProjectRoutes() {
       {routes.length === 0 ? (
         <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center">
           <p className="text-[13px] text-[var(--foreground-tertiary)]">
-            No project routes configured. Tasks use <code className="text-[11px] font-mono text-[var(--accent)]">JIRA_DEFAULT_PROJECT</code>.
+            No project routes configured. Tasks will use the default project from your environment config.
           </p>
           <button onClick={addRoute} className="mt-2 text-[12px] text-[var(--accent)] hover:underline">
             Add your first project

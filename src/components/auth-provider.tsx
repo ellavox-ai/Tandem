@@ -35,20 +35,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
+  const fetchProfile = async (authUser: User) => {
+    const { data } = await supabase
+      .from("users")
+      .select("id, email, display_name, role")
+      .eq("id", authUser.id)
+      .single();
+    if (data) setProfile(data);
+  };
+
   useEffect(() => {
     const getUser = async () => {
       const {
-        data: { user },
+        data: { user: authUser },
       } = await supabase.auth.getUser();
-      setUser(user);
+      setUser(authUser);
 
-      if (user) {
-        const { data } = await supabase
-          .from("users")
-          .select("id, email, display_name, role")
-          .eq("id", user.id)
-          .single();
-        if (data) setProfile(data);
+      if (authUser) {
+        await fetchProfile(authUser);
+      } else {
+        // Not authenticated — redirect to login
+        window.location.href = "/login";
+        return;
       }
 
       setLoading(false);
@@ -63,18 +71,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
-        const { data } = await supabase
-          .from("users")
-          .select("id, email, display_name, role")
-          .eq("id", currentUser.id)
-          .single();
-        if (data) setProfile(data);
+        await fetchProfile(currentUser);
       } else {
         setProfile(null);
       }
     });
 
     return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signOut = async () => {
@@ -83,6 +87,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
     window.location.href = "/login";
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[var(--accent)] flex items-center justify-center animate-pulse">
+            <svg
+              className="w-5 h-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
+              />
+            </svg>
+          </div>
+          <p className="text-[13px] text-[var(--foreground-tertiary)]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, signOut }}>
