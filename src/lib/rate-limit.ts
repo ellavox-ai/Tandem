@@ -7,11 +7,29 @@ const log = logger.child({ module: "rate-limit" });
 
 type RedisClient = import("ioredis").default;
 let _redis: RedisClient | null = null;
+let _redisUnavailable = false;
 
-async function getRedis(): Promise<RedisClient> {
+async function getRedis(): Promise<RedisClient | null> {
+  if (_redisUnavailable) return null;
   if (!_redis) {
     const { default: Redis } = await import("ioredis");
-    _redis = new Redis(getRedisConnection());
+    const baseConfig = getRedisConnection();
+    _redis = new Redis({
+      ...baseConfig,
+      maxRetriesPerRequest: 1,
+      connectTimeout: 3000,
+      commandTimeout: 2000,
+      retryStrategy(times) {
+        if (times > 1) {
+          _redisUnavailable = true;
+          return null;
+        }
+        return 200;
+      },
+    });
+    _redis.on("error", () => {
+      _redisUnavailable = true;
+    });
   }
   return _redis;
 }
@@ -34,6 +52,8 @@ export async function rateLimit(
 ): Promise<void> {
   try {
     const client = await getRedis();
+    if (!client) return;
+
     const windowKey = `rl:${key}:${Math.floor(Date.now() / options.windowMs)}`;
 
     const count = await client.incr(windowKey);

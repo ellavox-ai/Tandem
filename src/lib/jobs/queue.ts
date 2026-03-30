@@ -3,7 +3,14 @@ import { logger } from "@/lib/logger";
 
 const log = logger.child({ service: "jobs" });
 
-// Redis connection config (reused across queues and rate limiter)
+/**
+ * Returns true if a Redis URL/host is explicitly configured.
+ * When false, queue operations should be skipped (e.g. serverless without Redis).
+ */
+export function isRedisConfigured(): boolean {
+  return !!(process.env.REDIS_URL || process.env.REDIS_HOST);
+}
+
 export function getRedisConnection() {
   const url = process.env.REDIS_URL;
   if (url) {
@@ -98,7 +105,15 @@ export interface MaintenanceJob {
 
 export async function enqueueTranscriptProcessing(
   data: TranscriptProcessingJob
-): Promise<string> {
+): Promise<string | null> {
+  if (!isRedisConfigured()) {
+    log.warn(
+      { transcriptId: data.transcriptId },
+      "Redis not configured — skipping job enqueue. Transcript saved to DB but won't be processed until a worker is running."
+    );
+    return null;
+  }
+
   const job = await getTranscriptQueue().add("process", data, {
     attempts: 3,
     backoff: { type: "exponential", delay: 1000 },
@@ -114,7 +129,15 @@ export async function enqueueTranscriptProcessing(
 
 export async function enqueueJiraCreation(
   data: JiraCreationJob
-): Promise<string> {
+): Promise<string | null> {
+  if (!isRedisConfigured()) {
+    log.warn(
+      { taskId: data.taskId },
+      "Redis not configured — skipping Jira creation enqueue"
+    );
+    return null;
+  }
+
   const job = await getJiraQueue().add("create", data, {
     attempts: 3,
     backoff: { type: "exponential", delay: 2000 },
@@ -129,6 +152,11 @@ export async function enqueueJiraCreation(
 }
 
 export async function setupMaintenanceJobs(): Promise<void> {
+  if (!isRedisConfigured()) {
+    log.warn("Redis not configured — skipping maintenance job scheduling");
+    return;
+  }
+
   const queue = getMaintenanceQueue();
 
   // Expire stale claims every 5 minutes
