@@ -1,5 +1,29 @@
 import { vi } from "vitest";
 
+// Mock server-only so it doesn't throw in test environment
+vi.mock("server-only", () => ({}));
+
+// Mock supabaseAdmin used throughout server code
+vi.mock("@/lib/supabase", () => ({
+  supabaseAdmin: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: {
     info: vi.fn(),

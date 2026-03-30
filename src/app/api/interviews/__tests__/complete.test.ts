@@ -9,6 +9,10 @@ vi.mock("@/lib/jobs/queue", () => ({
   enqueueJiraCreation: vi.fn().mockResolvedValue("job-1"),
 }));
 
+vi.mock("@/lib/services/notifications", () => ({
+  notifyInterviewCompleted: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { POST } from "../[taskId]/complete/route";
 import { completeInterview } from "@/lib/services/interview-queue";
 import { enqueueJiraCreation } from "@/lib/jobs/queue";

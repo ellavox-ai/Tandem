@@ -1,6 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { notifyNewInterviews, notifyAutoCreatedTasks } from "../notifications";
+import {
+  notifyNewInterviews,
+  notifyAutoCreatedTasks,
+  notifyPushFailed,
+  notifyInterviewCompleted,
+  notifyClaimExpiring,
+  notify,
+} from "../notifications";
 import type { TranscriptRow, ExtractedTaskRow } from "@/lib/types";
+import { supabaseAdmin } from "@/lib/supabase";
 
 const mockFetch = vi.fn();
 
@@ -47,102 +55,159 @@ function makeTask(overrides: Partial<ExtractedTaskRow> = {}): ExtractedTaskRow {
   };
 }
 
-describe("notifyNewInterviews", () => {
+describe("notifications", () => {
   const originalEnv = { ...process.env };
 
   beforeEach(() => {
     vi.clearAllMocks();
     globalThis.fetch = mockFetch;
+    mockFetch.mockResolvedValue({ ok: true });
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
   });
 
-  it("sends Slack notification when webhook URL is set and tasks are pending", async () => {
-    process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
-    mockFetch.mockResolvedValue({ ok: true });
+  describe("notify (core)", () => {
+    it("writes to database and sends Slack", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
 
-    await notifyNewInterviews(transcript, [makeTask()]);
+      await notify({
+        type: "interview_needed",
+        title: "Test notification",
+        body: "Test body",
+        link: "/test",
+      });
 
-    expect(mockFetch).toHaveBeenCalledOnce();
-    const [url, options] = mockFetch.mock.calls[0];
-    expect(url).toBe("https://hooks.slack.com/test");
-    const body = JSON.parse(options.body);
-    expect(body.blocks).toBeDefined();
-    expect(body.blocks[0].text.text).toContain("Sprint Planning");
+      // DB insert
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+
+      // Slack
+      expect(mockFetch).toHaveBeenCalledOnce();
+      expect(mockFetch.mock.calls[0][0]).toBe("https://hooks.slack.com/test");
+    });
+
+    it("skips Slack when no webhook URL", async () => {
+      delete process.env.SLACK_WEBHOOK_URL;
+
+      await notify({
+        type: "interview_needed",
+        title: "Test",
+      });
+
+      // DB insert still happens
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      // Slack skipped
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it("skips Slack when slack: false", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+
+      await notify(
+        { type: "claim_expiring", title: "Test" },
+        { slack: false }
+      );
+
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
   });
 
-  it("returns without sending when SLACK_WEBHOOK_URL is not set", async () => {
-    delete process.env.SLACK_WEBHOOK_URL;
+  describe("notifyNewInterviews", () => {
+    it("sends notification when tasks are pending", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
 
-    await notifyNewInterviews(transcript, [makeTask()]);
+      await notifyNewInterviews(transcript, [makeTask()]);
 
-    expect(mockFetch).not.toHaveBeenCalled();
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      expect(mockFetch).toHaveBeenCalledOnce();
+      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(body.blocks[0].text.text).toContain("Sprint Planning");
+    });
+
+    it("skips when no pending_interview tasks", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+
+      await notifyNewInterviews(transcript, [
+        makeTask({ status: "completed" }),
+      ]);
+
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it("does not throw on network error", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+      mockFetch.mockRejectedValue(new Error("Network error"));
+
+      await expect(
+        notifyNewInterviews(transcript, [makeTask()])
+      ).resolves.not.toThrow();
+    });
   });
 
-  it("returns without sending when no pending_interview tasks", async () => {
-    process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+  describe("notifyAutoCreatedTasks", () => {
+    it("sends notification with Jira links", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+      process.env.JIRA_BASE_URL = "https://test.atlassian.net";
 
-    await notifyNewInterviews(transcript, [
-      makeTask({ status: "completed" }),
-    ]);
+      await notifyAutoCreatedTasks(transcript, [
+        { title: "Ship webhook", jiraKey: "ENG-123" },
+      ]);
 
-    expect(mockFetch).not.toHaveBeenCalled();
+      expect(mockFetch).toHaveBeenCalledOnce();
+      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(body.blocks[1].text.text).toContain("ENG-123");
+    });
+
+    it("skips Slack when no webhook URL", async () => {
+      delete process.env.SLACK_WEBHOOK_URL;
+
+      await notifyAutoCreatedTasks(transcript, [
+        { title: "Task", jiraKey: "ENG-1" },
+      ]);
+
+      // DB write still happens
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
   });
 
-  it("does not throw on network error", async () => {
-    process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
-    mockFetch.mockRejectedValue(new Error("Network error"));
+  describe("notifyPushFailed", () => {
+    it("sends failure notification", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
 
-    await expect(
-      notifyNewInterviews(transcript, [makeTask()])
-    ).resolves.not.toThrow();
-  });
-});
+      await notifyPushFailed("task-1", "Deploy monitoring", "Connection timeout");
 
-describe("notifyAutoCreatedTasks", () => {
-  const originalEnv = { ...process.env };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    globalThis.fetch = mockFetch;
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      expect(mockFetch).toHaveBeenCalledOnce();
+      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(body.blocks[0].text.text).toContain("failed");
+    });
   });
 
-  afterEach(() => {
-    process.env = { ...originalEnv };
+  describe("notifyInterviewCompleted", () => {
+    it("sends completion notification", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
+
+      await notifyInterviewCompleted("task-1", "Fix auth", "sean@ellavox.ai");
+
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      expect(mockFetch).toHaveBeenCalledOnce();
+      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(body.blocks[1].text.text).toContain("sean@ellavox.ai");
+    });
   });
 
-  it("sends notification with Jira links", async () => {
-    process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
-    process.env.JIRA_BASE_URL = "https://test.atlassian.net";
-    mockFetch.mockResolvedValue({ ok: true });
+  describe("notifyClaimExpiring", () => {
+    it("sends personal notification without Slack", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
 
-    await notifyAutoCreatedTasks(transcript, [
-      { title: "Ship webhook", jiraKey: "ENG-123" },
-    ]);
+      await notifyClaimExpiring("user-1", "task-1", "Review API");
 
-    expect(mockFetch).toHaveBeenCalledOnce();
-    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
-    expect(body.blocks[1].text.text).toContain("ENG-123");
-  });
-
-  it("returns silently when no webhook URL", async () => {
-    delete process.env.SLACK_WEBHOOK_URL;
-
-    await notifyAutoCreatedTasks(transcript, [
-      { title: "Task", jiraKey: "ENG-1" },
-    ]);
-
-    expect(mockFetch).not.toHaveBeenCalled();
-  });
-
-  it("does not throw on fetch failure", async () => {
-    process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test";
-    mockFetch.mockRejectedValue(new Error("Connection refused"));
-
-    await expect(
-      notifyAutoCreatedTasks(transcript, [{ title: "T", jiraKey: "K-1" }])
-    ).resolves.not.toThrow();
+      // DB insert
+      expect(supabaseAdmin.from).toHaveBeenCalledWith("notifications");
+      // No Slack (personal notification)
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
   });
 });
