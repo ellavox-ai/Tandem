@@ -92,9 +92,9 @@ export interface ExtractedTaskRow {
   claim_expires_at: string | null;
   dismissed_reason: string | null;
   interview_responses: Record<string, string> | null;
-  jira_project: string | null;
-  jira_issue_key: string | null;
-  jira_error: string | null;
+  tracker_project: string | null;
+  tracker_issue_key: string | null;
+  tracker_error: string | null;
   created_at: string;
   updated_at: string;
   // Joined fields (optional, from queries)
@@ -140,10 +140,8 @@ export interface ExtractionResult {
   processingTimeMs: number;
 }
 
-export interface JiraCreateResult {
-  issueKey: string;
-  issueUrl: string;
-}
+export type { IssueCreateResult } from "@/lib/issue-tracker";
+export type { IssueCreateResult as JiraCreateResult } from "@/lib/issue-tracker";
 
 export interface InterviewSubmission {
   responses: Record<string, string>;

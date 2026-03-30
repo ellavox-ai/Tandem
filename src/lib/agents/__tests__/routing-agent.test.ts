@@ -53,9 +53,9 @@ function makeTask(overrides: Partial<ExtractedTaskRow> = {}): ExtractedTaskRow {
     claim_expires_at: null,
     dismissed_reason: null,
     interview_responses: null,
-    jira_project: null,
-    jira_issue_key: null,
-    jira_error: null,
+    tracker_project: null,
+    tracker_issue_key: null,
+    tracker_error: null,
     suggested_interviewer: null,
     created_at: "2026-03-26T00:00:00Z",
     updated_at: "2026-03-26T00:00:00Z",
@@ -69,8 +69,8 @@ describe("routeTaskToProject", () => {
     process.env.JIRA_DEFAULT_PROJECT = "TEST";
   });
 
-  it("returns cached jira_project when already set", async () => {
-    const task = makeTask({ jira_project: "CACHED" });
+  it("returns cached tracker_project when already set", async () => {
+    const task = makeTask({ tracker_project: "CACHED" });
     const result = await routeTaskToProject(task);
     expect(result).toBe("CACHED");
   });

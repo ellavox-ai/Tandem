@@ -15,7 +15,7 @@ export async function POST(
 
     const { data: task, error } = await supabaseAdmin
       .from("extracted_tasks")
-      .select("id, status, jira_project")
+      .select("id, status, tracker_project")
       .eq("id", id)
       .single();
 
@@ -31,10 +31,10 @@ export async function POST(
 
     await supabaseAdmin
       .from("extracted_tasks")
-      .update({ jira_error: null })
+      .update({ tracker_error: null })
       .eq("id", id);
 
-    await enqueueJiraCreation({ taskId: id, projectKey: task.jira_project || undefined });
+    await enqueueJiraCreation({ taskId: id, projectKey: task.tracker_project || undefined });
 
     return NextResponse.json({ ok: true, taskId: id });
   } catch (err) {

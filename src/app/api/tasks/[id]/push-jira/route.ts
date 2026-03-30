@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createJiraIssueWithRequirements } from "@/lib/services/jira";
+import { getIssueTracker } from "@/lib/issue-tracker";
 import { routeTaskToProject } from "@/lib/agents/routing-agent";
 import { supabaseAdmin } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
@@ -46,32 +46,32 @@ export async function POST(
       );
     }
 
-    if (task.jira_issue_key) {
+    if (task.tracker_issue_key) {
       return NextResponse.json({
         ok: true,
         alreadyExists: true,
-        issueKey: task.jira_issue_key,
-        issueUrl: `${process.env.JIRA_BASE_URL}/browse/${task.jira_issue_key}`,
+        issueKey: task.tracker_issue_key,
+        issueUrl: `${process.env.JIRA_BASE_URL}/browse/${task.tracker_issue_key}`,
       });
     }
 
-    if (task.jira_error) {
+    if (task.tracker_error) {
       await supabaseAdmin
         .from("extracted_tasks")
-        .update({ jira_error: null })
+        .update({ tracker_error: null })
         .eq("id", id);
     }
 
     if (overrideProject) {
       await supabaseAdmin
         .from("extracted_tasks")
-        .update({ jira_project: overrideProject })
+        .update({ tracker_project: overrideProject })
         .eq("id", id);
-      task.jira_project = overrideProject;
+      task.tracker_project = overrideProject;
     }
 
     const resolvedProject = await routeTaskToProject(task);
-    const result = await createJiraIssueWithRequirements(id, resolvedProject);
+    const result = await getIssueTracker().createIssue(task, resolvedProject);
 
     log.info({ taskId: id, issueKey: result.issueKey, project: resolvedProject }, "Task pushed to Jira");
 
@@ -86,7 +86,7 @@ export async function POST(
 
     await supabaseAdmin
       .from("extracted_tasks")
-      .update({ status: "jira_failed", jira_error: message })
+      .update({ status: "jira_failed", tracker_error: message })
       .eq("id", id)
       .then(() => {});
 

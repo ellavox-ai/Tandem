@@ -6,7 +6,7 @@ import type {
 } from "./queue";
 import { extractTasks, storeAndRouteExtractedTasks } from "@/lib/services/extraction";
 import { updateTranscriptStatus, getTranscript } from "@/lib/services/ingestion";
-import { createJiraIssueWithRequirements } from "@/lib/services/jira";
+import { getIssueTracker } from "@/lib/issue-tracker";
 import { routeTaskToProject } from "@/lib/agents/routing-agent";
 import { expireStaleClaims, expireOldInterviews } from "@/lib/services/interview-queue";
 import { notifyNewInterviews, notifyAutoCreatedTasks, notifyPushFailed } from "@/lib/services/notifications";
@@ -134,7 +134,7 @@ export async function processJiraCreation(data: JiraCreationJob) {
 
   try {
     const resolvedProject = projectKey || await routeTaskToProject(task);
-    const result = await createJiraIssueWithRequirements(task, resolvedProject);
+    const result = await getIssueTracker().createIssue(task, resolvedProject);
     jobLog.info({ issueKey: result.issueKey, project: resolvedProject }, "Jira issue created");
 
     const transcript = await getTranscript(task.transcript_id);
@@ -149,7 +149,7 @@ export async function processJiraCreation(data: JiraCreationJob) {
 
     await supabaseAdmin
       .from("extracted_tasks")
-      .update({ status: "jira_failed", jira_error: errorMessage })
+      .update({ status: "jira_failed", tracker_error: errorMessage })
       .eq("id", taskId);
 
     await notifyPushFailed(taskId, task.extracted_title, errorMessage);

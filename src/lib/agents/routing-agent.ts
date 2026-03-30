@@ -33,9 +33,9 @@ export interface ProjectRoute {
 export async function routeTaskToProject(
   task: ExtractedTaskRow
 ): Promise<string> {
-  if (task.jira_project) {
-    log.debug({ taskId: task.id, project: task.jira_project }, "Using cached routing decision");
-    return task.jira_project;
+  if (task.tracker_project) {
+    log.debug({ taskId: task.id, project: task.tracker_project }, "Using cached routing decision");
+    return task.tracker_project;
   }
 
   const routes = await fetchProjectRoutes();
@@ -143,6 +143,6 @@ Select the best project for this task.`;
 async function persistRouting(taskId: string, projectKey: string): Promise<void> {
   await supabaseAdmin
     .from("extracted_tasks")
-    .update({ jira_project: projectKey })
+    .update({ tracker_project: projectKey })
     .eq("id", taskId);
 }

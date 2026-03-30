@@ -35,7 +35,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           single: vi.fn().mockResolvedValue({
-            data: { id: "task-1", status: "completed", jira_issue_key: null, jira_error: null, jira_project: null },
+            data: { id: "task-1", status: "completed", tracker_issue_key: null, tracker_error: null, tracker_project: null },
             error: null,
           }),
         }),
@@ -86,7 +86,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           single: vi.fn().mockResolvedValue({
-            data: { id: "task-1", status: "pending_interview", jira_issue_key: null },
+            data: { id: "task-1", status: "pending_interview", tracker_issue_key: null },
             error: null,
           }),
         }),
@@ -110,7 +110,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           single: vi.fn().mockResolvedValue({
-            data: { id: "task-1", status: "completed", jira_issue_key: "ENG-99", jira_error: null },
+            data: { id: "task-1", status: "completed", tracker_issue_key: "ENG-99", tracker_error: null },
             error: null,
           }),
         }),
@@ -132,7 +132,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
           single: vi.fn().mockResolvedValue({
-            data: { id: "task-1", status: "completed", jira_issue_key: null, jira_error: null, jira_project: null },
+            data: { id: "task-1", status: "completed", tracker_issue_key: null, tracker_error: null, tracker_project: null },
             error: null,
           }),
         }),
