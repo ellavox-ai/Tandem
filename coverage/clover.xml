@@ -1,0 +1,1432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1774879656978" clover="3.2.0">
+  <project timestamp="1774879656978" name="All files">
+    <metrics statements="1225" coveredstatements="970" conditionals="695" coveredconditionals="456" methods="217" coveredmethods="165" elements="2137" coveredelements="1591" complexity="0" loc="1225" ncloc="1225" packages="27" files="40" classes="40"/>
+    <package name="app.api.auth.login">
+      <metrics statements="8" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/auth/login/route.ts">
+        <metrics statements="8" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.auth.me">
+      <metrics statements="8" coveredstatements="7" conditionals="9" coveredconditionals="6" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/auth/me/route.ts">
+        <metrics statements="8" coveredstatements="7" conditionals="9" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="12" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.auth.signout">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/auth/signout/route.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.auth.signup">
+      <metrics statements="8" coveredstatements="7" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/auth/signup/route.ts">
+        <metrics statements="8" coveredstatements="7" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.config">
+      <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/config/route.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.config.[key]">
+      <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/config/[key]/route.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="24" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.dashboard.stats">
+      <metrics statements="9" coveredstatements="8" conditionals="16" coveredconditionals="8" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/dashboard/stats/route.ts">
+        <metrics statements="9" coveredstatements="8" conditionals="16" coveredconditionals="8" methods="1" coveredmethods="1"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].ai-interview">
+      <metrics statements="18" coveredstatements="18" conditionals="6" coveredconditionals="5" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/ai-interview/route.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="6" coveredconditionals="5" methods="1" coveredmethods="1"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="31" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="46" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].claim">
+      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/claim/route.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].complete">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/complete/route.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].dismiss">
+      <metrics statements="7" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/dismiss/route.ts">
+        <metrics statements="7" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].release">
+      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/release/route.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].save">
+      <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/save/route.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.interviews.[taskId].voice-complete">
+      <metrics statements="22" coveredstatements="18" conditionals="12" coveredconditionals="6" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/interviews/[taskId]/voice-complete/route.ts">
+        <metrics statements="22" coveredstatements="18" conditionals="12" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="17" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="34" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.notifications">
+      <metrics statements="21" coveredstatements="19" conditionals="14" coveredconditionals="11" methods="2" coveredmethods="2"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/notifications/route.ts">
+        <metrics statements="21" coveredstatements="19" conditionals="14" coveredconditionals="11" methods="2" coveredmethods="2"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="21" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="27" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="29" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="48" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.realtime.[taskId]">
+      <metrics statements="44" coveredstatements="43" conditionals="32" coveredconditionals="23" methods="7" coveredmethods="7"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/realtime/[taskId]/route.ts">
+        <metrics statements="44" coveredstatements="43" conditionals="32" coveredconditionals="23" methods="7" coveredmethods="7"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="71" count="6" type="stmt"/>
+        <line num="73" count="6" type="stmt"/>
+        <line num="74" count="6" type="stmt"/>
+        <line num="75" count="6" type="stmt"/>
+        <line num="77" count="6" type="stmt"/>
+        <line num="79" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="80" count="2" type="stmt"/>
+        <line num="83" count="4" type="stmt"/>
+        <line num="84" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="89" count="3" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="92" count="2" type="stmt"/>
+        <line num="111" count="2" type="stmt"/>
+        <line num="112" count="2" type="stmt"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="115" count="2" type="stmt"/>
+        <line num="121" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="122" count="1" type="stmt"/>
+        <line num="123" count="1" type="stmt"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="130" count="1" type="stmt"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="137" count="1" type="stmt"/>
+        <line num="142" count="3" type="stmt"/>
+        <line num="148" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="150" count="2" type="stmt"/>
+        <line num="156" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="159" count="2" type="stmt"/>
+        <line num="166" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="167" count="2" type="stmt"/>
+        <line num="170" count="2" type="stmt"/>
+        <line num="172" count="2" type="stmt"/>
+        <line num="175" count="2" type="stmt"/>
+        <line num="178" count="2" type="stmt"/>
+        <line num="181" count="2" type="stmt"/>
+        <line num="184" count="2" type="stmt"/>
+        <line num="192" count="2" type="cond" truecount="1" falsecount="1"/>
+      </file>
+    </package>
+    <package name="app.api.tasks">
+      <metrics statements="13" coveredstatements="13" conditionals="8" coveredconditionals="5" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/tasks/route.ts">
+        <metrics statements="13" coveredstatements="13" conditionals="8" coveredconditionals="5" methods="1" coveredmethods="1"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="22" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="23" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="27" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="31" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.tasks.[id].push-jira">
+      <metrics statements="27" coveredstatements="24" conditionals="14" coveredconditionals="11" methods="3" coveredmethods="2"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/tasks/[id]/push-jira/route.ts">
+        <metrics statements="27" coveredstatements="24" conditionals="14" coveredconditionals="11" methods="3" coveredmethods="2"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="26" count="5" type="stmt"/>
+        <line num="27" count="5" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="38" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="49" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="58" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="84" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="85" count="3" type="stmt"/>
+        <line num="87" count="3" type="stmt"/>
+        <line num="93" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.transcripts">
+      <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/transcripts/route.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.transcripts.[id]">
+      <metrics statements="9" coveredstatements="9" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/transcripts/[id]/route.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="22" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.transcripts.upload">
+      <metrics statements="36" coveredstatements="30" conditionals="17" coveredconditionals="12" methods="3" coveredmethods="1"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/transcripts/upload/route.ts">
+        <metrics statements="36" coveredstatements="30" conditionals="17" coveredconditionals="12" methods="3" coveredmethods="1"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="22" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="32" count="3" type="cond" truecount="5" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="38" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="39" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="45" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="app.api.webhooks.[provider]">
+      <metrics statements="31" coveredstatements="26" conditionals="16" coveredconditionals="14" methods="2" coveredmethods="2"/>
+      <file name="route.ts" path="/Users/seanalsup/Developer/orchaestaror/src/app/api/webhooks/[provider]/route.ts">
+        <metrics statements="31" coveredstatements="26" conditionals="16" coveredconditionals="14" methods="2" coveredmethods="2"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="30" count="4" type="stmt"/>
+        <line num="35" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="44" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="53" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="68" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="84" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib">
+      <metrics statements="37" coveredstatements="29" conditionals="18" coveredconditionals="13" methods="12" coveredmethods="9"/>
+      <file name="errors.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/errors.ts">
+        <metrics statements="20" coveredstatements="12" conditionals="10" coveredconditionals="5" methods="8" coveredmethods="5"/>
+        <line num="4" count="19" type="stmt"/>
+        <line num="9" count="13" type="cond" truecount="1" falsecount="0"/>
+        <line num="11" count="13" type="stmt"/>
+        <line num="12" count="13" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="30" count="9" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="62" count="20" type="cond" truecount="1" falsecount="1"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="73" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="13" type="stmt"/>
+        <line num="80" count="7" type="stmt"/>
+        <line num="81" count="7" type="stmt"/>
+      </file>
+      <file name="validation.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/validation.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="8" coveredconditionals="8" methods="4" coveredmethods="4"/>
+        <line num="4" count="9" type="stmt"/>
+        <line num="8" count="9" type="stmt"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="16" count="9" type="stmt"/>
+        <line num="23" count="9" type="stmt"/>
+        <line num="27" count="9" type="stmt"/>
+        <line num="41" count="9" type="stmt"/>
+        <line num="53" count="9" type="stmt"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="67" count="28" type="stmt"/>
+        <line num="68" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="7" type="stmt"/>
+        <line num="70" count="7" type="stmt"/>
+        <line num="72" count="7" type="stmt"/>
+        <line num="74" count="21" type="stmt"/>
+        <line num="81" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib.agents">
+      <metrics statements="137" coveredstatements="86" conditionals="73" coveredconditionals="36" methods="28" coveredmethods="14"/>
+      <file name="extraction-agent.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/agents/extraction-agent.ts">
+        <metrics statements="37" coveredstatements="23" conditionals="13" coveredconditionals="7" methods="9" coveredmethods="6"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="82" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="98" count="1" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+        <line num="115" count="2" type="stmt"/>
+        <line num="117" count="2" type="stmt"/>
+        <line num="118" count="2" type="stmt"/>
+        <line num="125" count="9" type="stmt"/>
+        <line num="126" count="9" type="stmt"/>
+        <line num="127" count="9" type="stmt"/>
+        <line num="128" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="129" count="3" type="stmt"/>
+        <line num="130" count="6" type="stmt"/>
+        <line num="140" count="4" type="stmt"/>
+        <line num="142" count="4" type="stmt"/>
+        <line num="143" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="147" count="5" type="stmt"/>
+        <line num="164" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="165" count="1" type="stmt"/>
+        <line num="166" count="1" type="stmt"/>
+        <line num="169" count="4" type="stmt"/>
+        <line num="170" count="4" type="stmt"/>
+        <line num="181" count="4" type="stmt"/>
+      </file>
+      <file name="interview-agent.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/agents/interview-agent.ts">
+        <metrics statements="47" coveredstatements="12" conditionals="34" coveredconditionals="7" methods="12" coveredmethods="1"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="141" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="160" count="6" type="stmt"/>
+        <line num="161" count="6" type="stmt"/>
+        <line num="162" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="163" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="164" count="4" type="stmt"/>
+        <line num="167" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="168" count="1" type="stmt"/>
+        <line num="176" count="1" type="stmt"/>
+        <line num="179" count="5" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
+        <line num="204" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="206" count="0" type="stmt"/>
+        <line num="212" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="215" count="0" type="stmt"/>
+      </file>
+      <file name="routing-agent.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/agents/routing-agent.ts">
+        <metrics statements="44" coveredstatements="42" conditionals="26" coveredconditionals="22" methods="7" coveredmethods="7"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="36" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="7" type="stmt"/>
+        <line num="42" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="49" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="55" count="8" type="stmt"/>
+        <line num="56" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="8" type="stmt"/>
+        <line num="59" count="4" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="64" count="7" type="stmt"/>
+        <line num="70" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="6" type="stmt"/>
+        <line num="73" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="76" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="88" count="4" type="stmt"/>
+        <line num="91" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="95" count="4" type="stmt"/>
+        <line num="107" count="4" type="stmt"/>
+        <line num="109" count="4" type="stmt"/>
+        <line num="110" count="4" type="stmt"/>
+        <line num="117" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="122" count="4" type="stmt"/>
+        <line num="123" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="124" count="1" type="stmt"/>
+        <line num="128" count="1" type="stmt"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="136" count="1" type="stmt"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="139" count="1" type="stmt"/>
+        <line num="144" count="7" type="stmt"/>
+      </file>
+      <file name="schemas.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/agents/schemas.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="41" count="4" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="84" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib.jobs">
+      <metrics statements="114" coveredstatements="43" conditionals="56" coveredconditionals="15" methods="17" coveredmethods="9"/>
+      <file name="processors.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/jobs/processors.ts">
+        <metrics statements="84" coveredstatements="22" conditionals="34" coveredconditionals="5" methods="9" coveredmethods="3"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="93" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="98" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="107" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="111" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="123" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="145" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="162" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="166" count="0" type="stmt"/>
+        <line num="172" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="182" count="2" type="stmt"/>
+        <line num="184" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="187" count="1" type="stmt"/>
+        <line num="188" count="1" type="stmt"/>
+        <line num="191" count="1" type="stmt"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="198" count="1" type="stmt"/>
+        <line num="199" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
+        <line num="208" count="3" type="stmt"/>
+        <line num="210" count="3" type="stmt"/>
+        <line num="220" count="3" type="stmt"/>
+        <line num="225" count="3" type="stmt"/>
+        <line num="232" count="3" type="stmt"/>
+        <line num="237" count="9" type="stmt"/>
+        <line num="238" count="0" type="stmt"/>
+        <line num="243" count="9" type="stmt"/>
+        <line num="244" count="0" type="stmt"/>
+        <line num="248" count="3" type="stmt"/>
+        <line num="250" count="3" type="stmt"/>
+      </file>
+      <file name="queue.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/jobs/queue.ts">
+        <metrics statements="30" coveredstatements="21" conditionals="22" coveredconditionals="10" methods="8" coveredmethods="6"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="47" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="54" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="108" count="1" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="124" count="1" type="stmt"/>
+        <line num="128" count="1" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib.providers">
+      <metrics statements="286" coveredstatements="266" conditionals="152" coveredconditionals="119" methods="68" coveredmethods="52"/>
+      <file name="base.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/base.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="34" count="7" type="stmt"/>
+        <line num="37" count="14" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+      </file>
+      <file name="google-meet.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/google-meet.ts">
+        <metrics statements="83" coveredstatements="77" conditionals="42" coveredconditionals="31" methods="10" coveredmethods="7"/>
+        <line num="15" count="10" type="stmt"/>
+        <line num="16" count="10" type="stmt"/>
+        <line num="17" count="10" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="37" count="8" type="stmt"/>
+        <line num="44" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="58" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="3" type="stmt"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="64" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="82" count="2" type="stmt"/>
+        <line num="86" count="2" type="stmt"/>
+        <line num="87" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="115" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="134" count="1" type="stmt"/>
+        <line num="138" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="139" count="1" type="stmt"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="141" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="1" type="stmt"/>
+        <line num="143" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="151" count="1" type="stmt"/>
+        <line num="152" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="156" count="1" type="stmt"/>
+        <line num="158" count="1" type="stmt"/>
+        <line num="159" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="160" count="1" type="stmt"/>
+        <line num="161" count="1" type="stmt"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="165" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="166" count="2" type="stmt"/>
+        <line num="167" count="2" type="stmt"/>
+        <line num="169" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="170" count="1" type="stmt"/>
+        <line num="175" count="1" type="stmt"/>
+        <line num="179" count="1" type="stmt"/>
+        <line num="180" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="182" count="1" type="stmt"/>
+        <line num="183" count="1" type="stmt"/>
+        <line num="185" count="1" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="187" count="1" type="stmt"/>
+        <line num="189" count="1" type="stmt"/>
+        <line num="190" count="5" type="stmt"/>
+        <line num="191" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="193" count="5" type="stmt"/>
+        <line num="194" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="195" count="2" type="stmt"/>
+        <line num="199" count="2" type="stmt"/>
+        <line num="203" count="3" type="stmt"/>
+        <line num="204" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="205" count="2" type="stmt"/>
+        <line num="206" count="2" type="stmt"/>
+        <line num="209" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="214" count="0" type="stmt"/>
+        <line num="217" count="2" type="stmt"/>
+        <line num="227" count="1" type="stmt"/>
+        <line num="228" count="1" type="stmt"/>
+        <line num="231" count="1" type="stmt"/>
+        <line num="235" count="1" type="stmt"/>
+      </file>
+      <file name="manual.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/manual.ts">
+        <metrics statements="53" coveredstatements="52" conditionals="28" coveredconditionals="19" methods="17" coveredmethods="14"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="57" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="65" count="7" type="stmt"/>
+        <line num="66" count="7" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="71" count="9" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="91" count="4" type="stmt"/>
+        <line num="92" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="95" count="4" type="stmt"/>
+        <line num="96" count="4" type="stmt"/>
+        <line num="99" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="101" count="4" type="stmt"/>
+        <line num="102" count="4" type="stmt"/>
+        <line num="103" count="4" type="stmt"/>
+        <line num="105" count="4" type="stmt"/>
+        <line num="106" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="107" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="109" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="110" count="4" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="118" count="8" type="stmt"/>
+        <line num="119" count="8" type="stmt"/>
+        <line num="121" count="8" type="stmt"/>
+        <line num="122" count="8" type="stmt"/>
+        <line num="132" count="7" type="stmt"/>
+        <line num="133" count="12" type="stmt"/>
+        <line num="134" count="7" type="stmt"/>
+        <line num="136" count="7" type="stmt"/>
+        <line num="137" count="12" type="stmt"/>
+        <line num="138" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="139" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="141" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="12" type="stmt"/>
+        <line num="148" count="12" type="stmt"/>
+        <line num="152" count="7" type="stmt"/>
+        <line num="156" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="157" count="19" type="stmt"/>
+        <line num="161" count="17" type="stmt"/>
+        <line num="162" count="6" type="stmt"/>
+        <line num="163" count="15" type="stmt"/>
+        <line num="164" count="15" type="stmt"/>
+        <line num="168" count="2" type="stmt"/>
+      </file>
+      <file name="ms-teams.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/ms-teams.ts">
+        <metrics statements="19" coveredstatements="15" conditionals="6" coveredconditionals="6" methods="6" coveredmethods="3"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="39" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="60" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="66" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+      </file>
+      <file name="n8n.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/n8n.ts">
+        <metrics statements="72" coveredstatements="71" conditionals="50" coveredconditionals="40" methods="21" coveredmethods="18"/>
+        <line num="20" count="14" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="36" count="11" type="stmt"/>
+        <line num="38" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="43" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="11" type="stmt"/>
+        <line num="63" count="8" type="stmt"/>
+        <line num="64" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="71" count="7" type="stmt"/>
+        <line num="72" count="7" type="stmt"/>
+        <line num="73" count="7" type="stmt"/>
+        <line num="76" count="7" type="cond" truecount="3" falsecount="0"/>
+        <line num="80" count="8" type="stmt"/>
+        <line num="112" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="4" type="stmt"/>
+        <line num="114" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="116" count="2" type="stmt"/>
+        <line num="123" count="7" type="cond" truecount="3" falsecount="0"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="129" count="5" type="stmt"/>
+        <line num="134" count="1" type="stmt"/>
+        <line num="135" count="1" type="stmt"/>
+        <line num="137" count="1" type="stmt"/>
+        <line num="138" count="4" type="stmt"/>
+        <line num="139" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="141" count="4" type="stmt"/>
+        <line num="142" count="4" type="stmt"/>
+        <line num="145" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="147" count="4" type="stmt"/>
+        <line num="148" count="4" type="stmt"/>
+        <line num="149" count="4" type="stmt"/>
+        <line num="151" count="4" type="stmt"/>
+        <line num="152" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="153" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="155" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="156" count="4" type="stmt"/>
+        <line num="160" count="1" type="stmt"/>
+        <line num="164" count="8" type="stmt"/>
+        <line num="165" count="8" type="stmt"/>
+        <line num="166" count="8" type="stmt"/>
+        <line num="167" count="8" type="stmt"/>
+        <line num="176" count="5" type="stmt"/>
+        <line num="177" count="6" type="stmt"/>
+        <line num="178" count="5" type="stmt"/>
+        <line num="180" count="5" type="stmt"/>
+        <line num="181" count="6" type="stmt"/>
+        <line num="182" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="183" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="185" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="186" count="6" type="stmt"/>
+        <line num="192" count="6" type="stmt"/>
+        <line num="196" count="5" type="stmt"/>
+        <line num="203" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="205" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="206" count="1" type="stmt"/>
+        <line num="208" count="3" type="stmt"/>
+        <line num="210" count="3" type="stmt"/>
+        <line num="213" count="12" type="stmt"/>
+        <line num="214" count="5" type="stmt"/>
+        <line num="215" count="10" type="stmt"/>
+        <line num="216" count="10" type="stmt"/>
+        <line num="220" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="221" count="14" type="stmt"/>
+        <line num="225" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="226" count="3" type="stmt"/>
+        <line num="229" count="1" type="stmt"/>
+      </file>
+      <file name="zoom.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/providers/zoom.ts">
+        <metrics statements="55" coveredstatements="47" conditionals="26" coveredconditionals="23" methods="11" coveredmethods="7"/>
+        <line num="14" count="5" type="stmt"/>
+        <line num="15" count="5" type="stmt"/>
+        <line num="16" count="5" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="38" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="74" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="81" count="3" type="stmt"/>
+        <line num="82" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="2" type="stmt"/>
+        <line num="86" count="2" type="stmt"/>
+        <line num="89" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="132" count="9" type="stmt"/>
+        <line num="133" count="9" type="stmt"/>
+        <line num="135" count="9" type="stmt"/>
+        <line num="136" count="28" type="stmt"/>
+        <line num="137" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="140" count="18" type="stmt"/>
+        <line num="141" count="19" type="stmt"/>
+        <line num="143" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="145" count="34" type="stmt"/>
+        <line num="146" count="17" type="stmt"/>
+        <line num="147" count="17" type="stmt"/>
+        <line num="150" count="17" type="stmt"/>
+        <line num="151" count="17" type="stmt"/>
+        <line num="154" count="17" type="stmt"/>
+        <line num="155" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="156" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="158" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="159" count="17" type="stmt"/>
+        <line num="163" count="9" type="stmt"/>
+        <line num="167" count="34" type="stmt"/>
+        <line num="168" count="34" type="stmt"/>
+        <line num="169" count="34" type="stmt"/>
+        <line num="170" count="34" type="stmt"/>
+        <line num="172" count="34" type="stmt"/>
+        <line num="173" count="34" type="stmt"/>
+        <line num="177" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib.services">
+      <metrics statements="331" coveredstatements="252" conditionals="230" coveredconditionals="152" methods="58" coveredmethods="50"/>
+      <file name="ingestion.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/services/ingestion.ts">
+        <metrics statements="39" coveredstatements="39" conditionals="21" coveredconditionals="20" methods="5" coveredmethods="5"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="23" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="57" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="97" count="3" type="stmt"/>
+        <line num="98" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="101" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="105" count="3" type="stmt"/>
+        <line num="110" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="122" count="2" type="stmt"/>
+        <line num="128" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="129" count="1" type="stmt"/>
+        <line num="139" count="3" type="stmt"/>
+        <line num="145" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="146" count="1" type="stmt"/>
+        <line num="149" count="3" type="stmt"/>
+        <line num="150" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="151" count="1" type="stmt"/>
+        <line num="152" count="1" type="stmt"/>
+        <line num="155" count="2" type="cond" truecount="1" falsecount="1"/>
+      </file>
+      <file name="interview-queue.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/services/interview-queue.ts">
+        <metrics statements="92" coveredstatements="65" conditionals="82" coveredconditionals="49" methods="12" coveredmethods="9"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="19" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="24" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="43" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="51" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="77" count="5" type="stmt"/>
+        <line num="83" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="87" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="89" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="95" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="103" count="2" type="stmt"/>
+        <line num="115" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="120" count="2" type="stmt"/>
+        <line num="121" count="2" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="139" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="143" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="152" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="168" count="2" type="stmt"/>
+        <line num="174" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="178" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="179" count="1" type="stmt"/>
+        <line num="183" count="1" type="stmt"/>
+        <line num="188" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="189" count="1" type="stmt"/>
+        <line num="191" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="192" count="1" type="stmt"/>
+        <line num="194" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="198" count="1" type="stmt"/>
+        <line num="205" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="206" count="0" type="stmt"/>
+        <line num="207" count="0" type="stmt"/>
+        <line num="210" count="1" type="stmt"/>
+        <line num="211" count="1" type="stmt"/>
+        <line num="222" count="2" type="stmt"/>
+        <line num="231" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="232" count="1" type="stmt"/>
+        <line num="233" count="1" type="stmt"/>
+        <line num="236" count="1" type="stmt"/>
+        <line num="246" count="2" type="stmt"/>
+        <line num="252" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="253" count="1" type="stmt"/>
+        <line num="256" count="1" type="stmt"/>
+        <line num="266" count="1" type="stmt"/>
+        <line num="273" count="2" type="stmt"/>
+        <line num="285" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="286" count="1" type="stmt"/>
+        <line num="287" count="1" type="stmt"/>
+        <line num="290" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="291" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="292" count="1" type="stmt"/>
+        <line num="294" count="1" type="stmt"/>
+        <line num="303" count="1" type="stmt"/>
+        <line num="307" count="1" type="stmt"/>
+        <line num="314" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="315" count="0" type="stmt"/>
+        <line num="316" count="0" type="stmt"/>
+        <line num="319" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="320" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="321" count="1" type="stmt"/>
+        <line num="323" count="1" type="stmt"/>
+      </file>
+      <file name="jira.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/services/jira.ts">
+        <metrics statements="168" coveredstatements="118" conditionals="97" coveredconditionals="58" methods="26" coveredmethods="21"/>
+        <line num="31" count="26" type="stmt"/>
+        <line num="32" count="26" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="26" type="stmt"/>
+        <line num="37" count="21" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="74" count="5" type="stmt"/>
+        <line num="82" count="4" type="stmt"/>
+        <line num="85" count="4" type="stmt"/>
+        <line num="86" count="5" type="stmt"/>
+        <line num="87" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="91" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="93" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="98" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="100" count="1" type="stmt"/>
+        <line num="101" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="103" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="108" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="114" count="4" type="stmt"/>
+        <line num="122" count="6" type="stmt"/>
+        <line num="125" count="6" type="stmt"/>
+        <line num="126" count="7" type="stmt"/>
+        <line num="127" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="131" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="132" count="1" type="stmt"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="136" count="1" type="stmt"/>
+        <line num="137" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="145" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="146" count="1" type="stmt"/>
+        <line num="147" count="1" type="stmt"/>
+        <line num="148" count="1" type="stmt"/>
+        <line num="149" count="2" type="stmt"/>
+        <line num="152" count="2" type="stmt"/>
+        <line num="156" count="6" type="stmt"/>
+        <line num="168" count="9" type="stmt"/>
+        <line num="169" count="9" type="stmt"/>
+        <line num="170" count="9" type="stmt"/>
+        <line num="171" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="173" count="9" type="cond" truecount="5" falsecount="0"/>
+        <line num="174" count="4" type="stmt"/>
+        <line num="177" count="5" type="stmt"/>
+        <line num="181" count="7" type="stmt"/>
+        <line num="182" count="7" type="stmt"/>
+        <line num="196" count="4" type="stmt"/>
+        <line num="197" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="198" count="4" type="stmt"/>
+        <line num="202" count="4" type="stmt"/>
+        <line num="203" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="204" count="1" type="stmt"/>
+        <line num="207" count="3" type="stmt"/>
+        <line num="209" count="3" type="stmt"/>
+        <line num="220" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="226" count="3" type="stmt"/>
+        <line num="228" count="3" type="stmt"/>
+        <line num="234" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="235" count="1" type="stmt"/>
+        <line num="236" count="1" type="stmt"/>
+        <line num="240" count="1" type="stmt"/>
+        <line num="243" count="2" type="stmt"/>
+        <line num="246" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="247" count="0" type="stmt"/>
+        <line num="248" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="249" count="0" type="stmt"/>
+        <line num="250" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="251" count="0" type="stmt"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="259" count="2" type="stmt"/>
+        <line num="260" count="2" type="stmt"/>
+        <line num="263" count="2" type="stmt"/>
+        <line num="268" count="2" type="stmt"/>
+        <line num="282" count="0" type="stmt"/>
+        <line num="283" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="286" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="287" count="0" type="stmt"/>
+        <line num="292" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="293" count="0" type="stmt"/>
+        <line num="295" count="0" type="stmt"/>
+        <line num="298" count="0" type="stmt"/>
+        <line num="300" count="0" type="stmt"/>
+        <line num="303" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="304" count="0" type="stmt"/>
+        <line num="310" count="0" type="stmt"/>
+        <line num="312" count="0" type="stmt"/>
+        <line num="323" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="324" count="0" type="stmt"/>
+        <line num="329" count="0" type="stmt"/>
+        <line num="330" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="331" count="0" type="stmt"/>
+        <line num="335" count="0" type="stmt"/>
+        <line num="337" count="0" type="stmt"/>
+        <line num="343" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="344" count="0" type="stmt"/>
+        <line num="345" count="0" type="stmt"/>
+        <line num="349" count="0" type="stmt"/>
+        <line num="352" count="0" type="stmt"/>
+        <line num="353" count="0" type="stmt"/>
+        <line num="356" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="357" count="0" type="stmt"/>
+        <line num="358" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="359" count="0" type="stmt"/>
+        <line num="360" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="361" count="0" type="stmt"/>
+        <line num="362" count="0" type="stmt"/>
+        <line num="369" count="0" type="stmt"/>
+        <line num="379" count="0" type="stmt"/>
+        <line num="384" count="0" type="stmt"/>
+        <line num="394" count="1" type="stmt"/>
+        <line num="395" count="1" type="stmt"/>
+        <line num="400" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="402" count="0" type="stmt"/>
+        <line num="403" count="0" type="stmt"/>
+        <line num="405" count="0" type="stmt"/>
+        <line num="406" count="0" type="stmt"/>
+        <line num="415" count="0" type="stmt"/>
+        <line num="432" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="435" count="3" type="stmt"/>
+        <line num="436" count="3" type="stmt"/>
+        <line num="441" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="443" count="2" type="stmt"/>
+        <line num="447" count="2" type="stmt"/>
+        <line num="448" count="2" type="stmt"/>
+        <line num="450" count="2" type="stmt"/>
+        <line num="451" count="3" type="stmt"/>
+        <line num="455" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="456" count="1" type="stmt"/>
+        <line num="464" count="2" type="stmt"/>
+        <line num="469" count="9" type="stmt"/>
+        <line num="478" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="479" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="480" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="481" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="483" count="5" type="stmt"/>
+        <line num="484" count="5" type="stmt"/>
+        <line num="489" count="13" type="stmt"/>
+        <line num="491" count="135" type="stmt"/>
+        <line num="492" count="151" type="stmt"/>
+        <line num="494" count="13" type="stmt"/>
+        <line num="495" count="122" type="stmt"/>
+        <line num="496" count="2765" type="cond" truecount="2" falsecount="0"/>
+        <line num="497" count="2765" type="stmt"/>
+        <line num="505" count="13" type="stmt"/>
+        <line num="510" count="9" type="cond" truecount="5" falsecount="0"/>
+        <line num="512" count="1" type="stmt"/>
+        <line num="514" count="4" type="stmt"/>
+        <line num="516" count="1" type="stmt"/>
+        <line num="518" count="1" type="stmt"/>
+        <line num="520" count="2" type="stmt"/>
+        <line num="528" count="2" type="stmt"/>
+        <line num="534" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="535" count="1" type="stmt"/>
+        <line num="538" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="539" count="1" type="stmt"/>
+        <line num="543" count="0" type="stmt"/>
+        <line num="548" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.ts" path="/Users/seanalsup/Developer/orchaestaror/src/lib/services/notifications.ts">
+        <metrics statements="32" coveredstatements="30" conditionals="30" coveredconditionals="25" methods="15" coveredmethods="15"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="34" count="10" type="stmt"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="38" count="10" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="51" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="6" type="stmt"/>
+        <line num="75" count="3" type="stmt"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="78" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="80" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="3" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="87" count="2" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="118" count="2" type="stmt"/>
+        <line num="146" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="148" count="2" type="stmt"/>
+        <line num="152" count="2" type="stmt"/>
+        <line num="176" count="2" type="stmt"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="228" count="1" type="stmt"/>
+        <line num="262" count="1" type="stmt"/>
+        <line num="278" count="2" type="stmt"/>
+        <line num="290" count="8" type="stmt"/>
+        <line num="291" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="293" count="6" type="stmt"/>
+        <line num="294" count="6" type="stmt"/>
+        <line num="300" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="301" count="0" type="stmt"/>
+        <line num="304" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

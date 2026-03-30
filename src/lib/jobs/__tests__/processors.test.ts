@@ -62,6 +62,7 @@ vi.mock("@/lib/services/interview-queue", () => ({
 vi.mock("@/lib/services/notifications", () => ({
   notifyNewInterviews: vi.fn().mockResolvedValue(undefined),
   notifyAutoCreatedTasks: vi.fn().mockResolvedValue(undefined),
+  notifyPushFailed: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("@/lib/supabase", () => {
