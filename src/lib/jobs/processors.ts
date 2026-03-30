@@ -10,7 +10,7 @@ import { updateTranscriptStatus, getTranscript } from "@/lib/services/ingestion"
 import { createJiraIssueWithRequirements } from "@/lib/services/jira";
 import { routeTaskToProject } from "@/lib/agents/routing-agent";
 import { expireStaleClaims, expireOldInterviews } from "@/lib/services/interview-queue";
-import { notifyNewInterviews, notifyAutoCreatedTasks } from "@/lib/services/notifications";
+import { notifyNewInterviews, notifyAutoCreatedTasks, notifyPushFailed } from "@/lib/services/notifications";
 import { supabaseAdmin } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
 import type { NormalizedTranscript, TranscriptProvider } from "@/lib/types";
@@ -167,6 +167,9 @@ async function processJiraCreation(job: Job<JiraCreationJob>) {
       .from("extracted_tasks")
       .update({ status: "jira_failed", jira_error: errorMessage })
       .eq("id", taskId);
+
+    // Notify about the failure
+    await notifyPushFailed(taskId, task.extracted_title, errorMessage);
 
     throw err; // Let BullMQ handle retries
   }

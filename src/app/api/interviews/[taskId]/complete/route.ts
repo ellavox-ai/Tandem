@@ -5,6 +5,7 @@ import { requireAuth } from "@/lib/auth";
 import { apiError } from "@/lib/errors";
 import { parseBody } from "@/lib/validation";
 import { interviewCompleteBody } from "@/lib/validation";
+import { notifyInterviewCompleted } from "@/lib/services/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -27,6 +28,13 @@ export async function POST(
     });
 
     await enqueueJiraCreation({ taskId: task.id });
+
+    // Notify team that interview is complete
+    await notifyInterviewCompleted(
+      task.id,
+      task.extracted_title,
+      user.email
+    );
 
     return NextResponse.json({ task });
   } catch (err) {

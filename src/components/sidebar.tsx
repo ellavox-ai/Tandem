@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth-provider";
+import { NotificationBell } from "./notification-bell";
 
 const NAV_ITEMS = [
   {
@@ -136,6 +137,7 @@ export function Sidebar() {
               <p className="text-[13px] font-medium truncate">{profile.display_name}</p>
               <p className="text-[10px] text-[var(--foreground-tertiary)] truncate">{profile.email}</p>
             </div>
+            <NotificationBell />
             <button
               onClick={signOut}
               title="Sign out"
