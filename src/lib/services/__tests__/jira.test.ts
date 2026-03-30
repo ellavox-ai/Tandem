@@ -50,6 +50,7 @@ function makeTask(overrides: Partial<ExtractedTaskRow> = {}): ExtractedTaskRow {
     jira_project: null,
     jira_issue_key: null,
     jira_error: null,
+    suggested_interviewer: null,
     created_at: "2026-03-26T00:00:00Z",
     updated_at: "2026-03-26T00:00:00Z",
     ...overrides,
