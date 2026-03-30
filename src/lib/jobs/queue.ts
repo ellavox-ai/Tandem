@@ -3,16 +3,20 @@ import { logger } from "@/lib/logger";
 
 const log = logger.child({ service: "jobs" });
 
+function getRedisUrl(): string | undefined {
+  return process.env.REDIS_URL || process.env.tandem_REDIS_URL;
+}
+
 /**
  * Returns true if a Redis URL/host is explicitly configured.
  * When false, queue operations should be skipped (e.g. serverless without Redis).
  */
 export function isRedisConfigured(): boolean {
-  return !!(process.env.REDIS_URL || process.env.REDIS_HOST);
+  return !!(getRedisUrl() || process.env.REDIS_HOST);
 }
 
 export function getRedisConnection() {
-  const url = process.env.REDIS_URL;
+  const url = getRedisUrl();
   if (url) {
     const parsed = new URL(url);
     return {
