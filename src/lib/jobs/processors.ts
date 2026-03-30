@@ -1,5 +1,4 @@
-import { Worker, Job } from "bullmq";
-import { getRedisConnection, QUEUE_NAMES, enqueueJiraCreation } from "./queue";
+import { enqueueJiraCreation } from "./queue";
 import type {
   TranscriptProcessingJob,
   JiraCreationJob,
@@ -17,12 +16,10 @@ import type { NormalizedTranscript, TranscriptProvider } from "@/lib/types";
 
 const log = logger.child({ service: "worker" });
 
-/** Safely parse a pipeline_config JSON value with a fallback. */
 function safeParseConfig<T>(value: unknown, fallback: T): T {
   try {
     if (value === null || value === undefined) return fallback;
     if (typeof value === "string") return JSON.parse(value) as T;
-    // Supabase stores jsonb as already-parsed objects
     return value as T;
   } catch {
     log.warn({ value }, "Failed to parse config value, using fallback");
@@ -33,21 +30,17 @@ function safeParseConfig<T>(value: unknown, fallback: T): T {
 /**
  * Process a transcript: extract tasks via Claude, store them, route to Jira or interview queue.
  */
-async function processTranscript(job: Job<TranscriptProcessingJob>) {
-  const { transcriptId, provider, meetingTitle, meetingDate, attendees, duration, utterances } =
-    job.data;
-  const jobLog = log.child({ transcriptId, jobId: job.id });
+export async function processTranscript(data: TranscriptProcessingJob) {
+  const { transcriptId, provider, meetingTitle, meetingDate, attendees, duration, utterances } = data;
+  const jobLog = log.child({ transcriptId });
 
   jobLog.info("Starting transcript processing");
-
-  // Mark as processing
   await updateTranscriptStatus(transcriptId, "processing");
 
   try {
-    // Reconstruct the NormalizedTranscript for the extraction engine
     const transcript: NormalizedTranscript = {
       provider: provider as TranscriptProvider,
-      externalId: job.data.externalId,
+      externalId: data.externalId,
       meetingTitle,
       meetingDate: new Date(meetingDate),
       duration,
@@ -57,7 +50,6 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
       metadata: {},
     };
 
-    // Extract tasks via Claude
     const result = await extractTasks(transcript, transcriptId);
 
     if (result.tasks.length === 0) {
@@ -66,7 +58,6 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
       return;
     }
 
-    // Get auto-create threshold from config
     const { data: configRow } = await supabaseAdmin
       .from("pipeline_config")
       .select("value")
@@ -74,8 +65,6 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
       .single();
 
     const autoCreateThreshold = safeParseConfig<string[]>(configRow?.value, ["high"]);
-
-    // Store tasks and determine routing
     const taskIds = await storeAndRouteExtractedTasks(result, autoCreateThreshold);
 
     if (taskIds.length === 0) {
@@ -84,7 +73,6 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
       return;
     }
 
-    // Fetch the stored tasks to know which need Jira creation vs. interviews
     const { data: storedTasks, error: fetchError } = await supabaseAdmin
       .from("extracted_tasks")
       .select("*")
@@ -96,13 +84,11 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
     }
 
     if (storedTasks && storedTasks.length > 0) {
-      // Enqueue Jira creation for auto-created tasks
       const autoCreated = storedTasks.filter((t) => t.status === "auto_created");
       for (const task of autoCreated) {
         await enqueueJiraCreation({ taskId: task.id });
       }
 
-      // Send notifications for interview tasks
       const transcriptRow = await getTranscript(transcriptId);
       if (transcriptRow) {
         const interviewTasks = storedTasks.filter(
@@ -123,16 +109,16 @@ async function processTranscript(job: Job<TranscriptProcessingJob>) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     jobLog.error({ err }, "Transcript processing failed");
     await updateTranscriptStatus(transcriptId, "failed", errorMessage);
-    throw err; // Let BullMQ handle retries
+    throw err;
   }
 }
 
 /**
  * Create a Jira issue for an extracted task.
  */
-async function processJiraCreation(job: Job<JiraCreationJob>) {
-  const { taskId, projectKey } = job.data;
-  const jobLog = log.child({ taskId, jobId: job.id });
+export async function processJiraCreation(data: JiraCreationJob) {
+  const { taskId, projectKey } = data;
+  const jobLog = log.child({ taskId });
 
   jobLog.info("Creating Jira issue");
 
@@ -151,7 +137,6 @@ async function processJiraCreation(job: Job<JiraCreationJob>) {
     const result = await createJiraIssueWithRequirements(task, resolvedProject);
     jobLog.info({ issueKey: result.issueKey, project: resolvedProject }, "Jira issue created");
 
-    // Notify about auto-created tasks using the refined title
     const transcript = await getTranscript(task.transcript_id);
     if (transcript) {
       await notifyAutoCreatedTasks(transcript, [
@@ -162,26 +147,21 @@ async function processJiraCreation(job: Job<JiraCreationJob>) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     jobLog.error({ err }, "Jira creation failed");
 
-    // Store the error on the task
     await supabaseAdmin
       .from("extracted_tasks")
       .update({ status: "jira_failed", jira_error: errorMessage })
       .eq("id", taskId);
 
-    // Notify about the failure
     await notifyPushFailed(taskId, task.extracted_title, errorMessage);
-
-    throw err; // Let BullMQ handle retries
+    throw err;
   }
 }
 
 /**
  * Run maintenance tasks (claim expiry, interview expiry).
  */
-async function processMaintenance(job: Job<MaintenanceJob>) {
-  const { type } = job.data;
-
-  switch (type) {
+export async function processMaintenance(data: MaintenanceJob) {
+  switch (data.type) {
     case "expire-claims": {
       const count = await expireStaleClaims();
       log.info({ count }, "Maintenance: expired stale claims");
@@ -200,52 +180,4 @@ async function processMaintenance(job: Job<MaintenanceJob>) {
       break;
     }
   }
-}
-
-// ─── Worker Factory ─────────────────────────────────────────────────────────
-
-export function startWorkers() {
-  const connection = getRedisConnection();
-
-  const transcriptWorker = new Worker(
-    QUEUE_NAMES.TRANSCRIPT_PROCESSING,
-    processTranscript,
-    {
-      connection,
-      concurrency: 5, // Max 5 simultaneous Claude extraction jobs
-      limiter: { max: 10, duration: 60000 }, // Rate limit: 10 per minute
-    }
-  );
-
-  const jiraWorker = new Worker(QUEUE_NAMES.JIRA_CREATION, processJiraCreation, {
-    connection,
-    concurrency: 10,
-  });
-
-  const maintenanceWorker = new Worker(
-    QUEUE_NAMES.MAINTENANCE,
-    processMaintenance,
-    { connection, concurrency: 1 }
-  );
-
-  // Error handlers
-  for (const [name, worker] of [
-    ["transcript", transcriptWorker],
-    ["jira", jiraWorker],
-    ["maintenance", maintenanceWorker],
-  ] as const) {
-    (worker as Worker).on("failed", (job, err) => {
-      log.error(
-        { worker: name, jobId: job?.id, err: err.message },
-        "Job failed"
-      );
-    });
-    (worker as Worker).on("completed", (job) => {
-      log.debug({ worker: name, jobId: job.id }, "Job completed");
-    });
-  }
-
-  log.info("All workers started");
-
-  return { transcriptWorker, jiraWorker, maintenanceWorker };
 }

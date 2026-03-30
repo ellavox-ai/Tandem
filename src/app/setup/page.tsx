@@ -197,8 +197,8 @@ export default function SetupPage() {
         </div>
       </SectionCard>
 
-      <SectionCard id="redis" title="Redis (Job Queue)" status={s("redis")}>
-        <p className="text-[13px] text-[var(--foreground-secondary)]">Redis powers BullMQ for background processing. Auto-started in local dev.</p>
+      <SectionCard id="redis" title="Redis (Rate Limiting)" status={s("redis")}>
+        <p className="text-[13px] text-[var(--foreground-secondary)]">Redis is used for rate limiting. Optional — requests are allowed through if Redis is unavailable. Job queues use Vercel Queues.</p>
         <div className="flex flex-col gap-1.5">
           <EnvVar name="REDIS_HOST" placeholder="localhost" />
           <EnvVar name="REDIS_PORT" placeholder="6379" />
@@ -259,8 +259,8 @@ const ENV_VARS = [
   { name: "SUPABASE_SERVICE_KEY", required: true, description: "Supabase service role key for server-side access" },
   { name: "NEXT_PUBLIC_SUPABASE_URL", required: true, description: "Supabase URL exposed to the browser" },
   { name: "NEXT_PUBLIC_SUPABASE_ANON_KEY", required: true, description: "Supabase anonymous key for client-side auth" },
-  { name: "REDIS_HOST", required: true, description: "Redis host for BullMQ job queue (default: localhost)" },
-  { name: "REDIS_PORT", required: true, description: "Redis port (default: 6379)" },
+  { name: "REDIS_HOST", required: false, description: "Redis host for rate limiting (default: localhost). Optional — falls back gracefully." },
+  { name: "REDIS_PORT", required: false, description: "Redis port (default: 6379)" },
   { name: "ANTHROPIC_API_KEY", required: true, description: "Anthropic API key for Claude-powered task extraction" },
   { name: "JIRA_BASE_URL", required: true, description: "Your Atlassian instance URL" },
   { name: "JIRA_EMAIL", required: true, description: "Email of the Jira account that owns the API token" },

@@ -1,36 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { workerInstances } = vi.hoisted(() => ({
-  workerInstances: [] as Array<{ name: string; processor: Function; on: ReturnType<typeof vi.fn>; close: ReturnType<typeof vi.fn> }>,
-}));
-
-vi.mock("bullmq", () => {
-  class MockWorker {
-    name: string;
-    processor: Function;
-    on = vi.fn();
-    close = vi.fn().mockResolvedValue(undefined);
-    constructor(name: string, processor: Function, _opts?: unknown) {
-      this.name = name;
-      this.processor = processor;
-      workerInstances.push(this);
-    }
-  }
-  return { Worker: MockWorker };
-});
-
 vi.mock("../queue", () => ({
-  getRedisConnection: vi.fn().mockReturnValue({ host: "localhost", port: 6379 }),
-  QUEUE_NAMES: {
-    TRANSCRIPT_PROCESSING: "transcript-processing",
-    JIRA_CREATION: "jira-creation",
-    MAINTENANCE: "maintenance",
-  },
-  enqueueJiraCreation: vi.fn().mockResolvedValue("job-1"),
+  enqueueJiraCreation: vi.fn().mockResolvedValue("msg-1"),
 }));
+
+vi.mock("@/lib/logger", () => {
+  const mockLogger = {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+    child: vi.fn().mockReturnThis(),
+  };
+  return { logger: mockLogger };
+});
 
 vi.mock("@/lib/services/ingestion", () => ({
   updateTranscriptStatus: vi.fn().mockResolvedValue(undefined),
+  getTranscript: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock("@/lib/services/extraction", () => ({
@@ -87,6 +74,7 @@ vi.mock("@/lib/supabase", () => {
           eq: vi.fn().mockReturnValue({
             single: mockSingle,
           }),
+          in: vi.fn().mockResolvedValue({ data: [], error: null }),
           order: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({ data: null, error: null }),
           }),
@@ -100,43 +88,51 @@ vi.mock("@/lib/supabase", () => {
   };
 });
 
-import { startWorkers } from "../processors";
+import { processTranscript, processJiraCreation, processMaintenance } from "../processors";
+import { updateTranscriptStatus } from "@/lib/services/ingestion";
 import { expireStaleClaims, expireOldInterviews } from "@/lib/services/interview-queue";
 
-describe("startWorkers", () => {
+describe("processTranscript", () => {
   beforeEach(() => {
-    workerInstances.length = 0;
+    vi.clearAllMocks();
   });
 
-  it("creates three workers", () => {
-    const workers = startWorkers();
-    expect(workerInstances).toHaveLength(3);
-    expect(workers).toHaveProperty("transcriptWorker");
-    expect(workers).toHaveProperty("jiraWorker");
-    expect(workers).toHaveProperty("maintenanceWorker");
+  it("marks transcript completed when no tasks extracted", async () => {
+    await processTranscript({
+      transcriptId: "t-1",
+      provider: "manual",
+      externalId: "ext-1",
+      meetingTitle: "Test",
+      meetingDate: "2026-03-26T10:00:00Z",
+      attendees: [],
+      duration: 600,
+      utterances: [],
+    });
+
+    expect(updateTranscriptStatus).toHaveBeenCalledWith("t-1", "processing");
+    expect(updateTranscriptStatus).toHaveBeenCalledWith("t-1", "completed");
   });
 });
 
-describe("maintenance processor", () => {
+describe("processJiraCreation", () => {
+  it("creates a Jira issue for the task", async () => {
+    await processJiraCreation({ taskId: "task-1" });
+    // If it doesn't throw, it succeeded
+  });
+});
+
+describe("processMaintenance", () => {
   beforeEach(() => {
-    workerInstances.length = 0;
+    vi.clearAllMocks();
   });
 
-  it("calls expireStaleClaims for expire-claims job", async () => {
-    startWorkers();
-    const maintenanceWorker = workerInstances.find((w) => w.name === "maintenance");
-    expect(maintenanceWorker).toBeDefined();
-
-    await maintenanceWorker!.processor({ name: "maintenance", data: { type: "expire-claims" } });
+  it("calls expireStaleClaims for expire-claims", async () => {
+    await processMaintenance({ type: "expire-claims" });
     expect(expireStaleClaims).toHaveBeenCalled();
   });
 
-  it("calls expireOldInterviews for expire-interviews job", async () => {
-    startWorkers();
-    const maintenanceWorker = workerInstances.find((w) => w.name === "maintenance");
-    expect(maintenanceWorker).toBeDefined();
-
-    await maintenanceWorker!.processor({ name: "maintenance", data: { type: "expire-interviews" } });
+  it("calls expireOldInterviews for expire-interviews", async () => {
+    await processMaintenance({ type: "expire-interviews" });
     expect(expireOldInterviews).toHaveBeenCalled();
   });
 });

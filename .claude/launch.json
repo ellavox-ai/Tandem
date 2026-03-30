@@ -9,11 +9,6 @@
       "autoPort": true
     },
     {
-      "name": "BullMQ Worker",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["tsx", "src/worker.ts"]
-    },
-    {
       "name": "Full Dev Environment",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev:all"],

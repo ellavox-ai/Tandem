@@ -1,16 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("bullmq", () => {
-  const mockAdd = vi.fn().mockResolvedValue({ id: "job-1" });
-  const mockUpsertJobScheduler = vi.fn().mockResolvedValue({});
-  class MockQueue {
-    add = mockAdd;
-    upsertJobScheduler = mockUpsertJobScheduler;
-  }
-  return { Queue: MockQueue };
-});
+const { mockSend } = vi.hoisted(() => ({
+  mockSend: vi.fn().mockResolvedValue({ messageId: "msg-1" }),
+}));
+
+vi.mock("@vercel/queue", () => ({
+  send: mockSend,
+}));
 
 import { getRedisConnection, enqueueTranscriptProcessing, enqueueJiraCreation } from "../queue";
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe("getRedisConnection", () => {
   it("returns default host and port when env not set", () => {
@@ -37,11 +39,35 @@ describe("getRedisConnection", () => {
     delete process.env.REDIS_HOST;
     delete process.env.REDIS_PORT;
   });
+
+  it("prefers REDIS_URL over REDIS_HOST", () => {
+    process.env.REDIS_URL = "rediss://default:pass@my-redis.upstash.io:6379";
+    process.env.REDIS_HOST = "should-not-use";
+
+    const conn = getRedisConnection();
+    expect(conn.host).toBe("my-redis.upstash.io");
+    expect(conn.password).toBe("pass");
+    expect(conn.tls).toEqual({});
+
+    delete process.env.REDIS_URL;
+    delete process.env.REDIS_HOST;
+  });
+
+  it("falls back to tandem_REDIS_URL", () => {
+    delete process.env.REDIS_URL;
+    process.env.tandem_REDIS_URL = "rediss://default:secret@tandem.upstash.io:6379";
+
+    const conn = getRedisConnection();
+    expect(conn.host).toBe("tandem.upstash.io");
+    expect(conn.password).toBe("secret");
+
+    delete process.env.tandem_REDIS_URL;
+  });
 });
 
 describe("enqueueTranscriptProcessing", () => {
-  it("returns a job ID", async () => {
-    const jobId = await enqueueTranscriptProcessing({
+  it("sends to Vercel Queue and returns messageId", async () => {
+    const id = await enqueueTranscriptProcessing({
       transcriptId: "t-1",
       provider: "manual",
       externalId: "ext-1",
@@ -52,13 +78,17 @@ describe("enqueueTranscriptProcessing", () => {
       utterances: [],
     });
 
-    expect(jobId).toBeDefined();
+    expect(id).toBe("msg-1");
+    expect(mockSend).toHaveBeenCalledWith("transcript-processing", expect.objectContaining({
+      transcriptId: "t-1",
+    }));
   });
 });
 
 describe("enqueueJiraCreation", () => {
-  it("returns a job ID", async () => {
-    const jobId = await enqueueJiraCreation({ taskId: "task-1" });
-    expect(jobId).toBeDefined();
+  it("sends to Vercel Queue and returns messageId", async () => {
+    const id = await enqueueJiraCreation({ taskId: "task-1" });
+    expect(id).toBe("msg-1");
+    expect(mockSend).toHaveBeenCalledWith("jira-creation", { taskId: "task-1" });
   });
 });

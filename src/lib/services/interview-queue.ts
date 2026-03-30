@@ -267,7 +267,7 @@ export async function releaseClaim(
 }
 
 /**
- * Expire stale claims (run periodically via BullMQ).
+ * Expire stale claims (run periodically via cron).
  */
 export async function expireStaleClaims(): Promise<number> {
   const { data, error } = await supabaseAdmin
@@ -295,7 +295,7 @@ export async function expireStaleClaims(): Promise<number> {
 }
 
 /**
- * Expire old unclaimed interviews (run periodically via BullMQ).
+ * Expire old unclaimed interviews (run periodically via cron).
  */
 export async function expireOldInterviews(
   expiryHours: number = 72

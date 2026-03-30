@@ -45,13 +45,8 @@ if ! command -v supabase &>/dev/null; then
 fi
 
 if ! command -v redis-server &>/dev/null; then
-  warn "Redis not found. Installing via Homebrew..."
-  if command -v brew &>/dev/null; then
-    brew install redis
-  else
-    err "Redis is required. Install it: brew install redis"
-    exit 1
-  fi
+  warn "Redis not found. Rate limiting will be disabled locally."
+  warn "Install with: brew install redis (optional)"
 fi
 
 if ! docker info &>/dev/null 2>&1; then
@@ -128,19 +123,18 @@ else
   warn "Could not get DB URL. Run migrations manually."
 fi
 
-# ─── Start Redis ─────────────────────────────────────────────────────────────
+# ─── Start Redis (optional, for rate limiting) ──────────────────────────────
 
-if redis-cli ping &>/dev/null 2>&1; then
-  ok "Redis is already running."
-else
+if command -v redis-cli &>/dev/null && redis-cli ping &>/dev/null 2>&1; then
+  ok "Redis is already running (rate limiting enabled)."
+elif command -v redis-server &>/dev/null; then
   log "Starting Redis..."
   redis-server --daemonize yes --loglevel warning
   sleep 1
   if redis-cli ping &>/dev/null 2>&1; then
     ok "Redis started."
   else
-    err "Failed to start Redis."
-    exit 1
+    warn "Failed to start Redis. Rate limiting will be disabled."
   fi
 fi
 
@@ -153,17 +147,10 @@ echo -e "${GREEN}═════════════════════
 echo ""
 echo -e "  ${BLUE}App:${NC}        http://localhost:3000"
 [ -n "${SB_STUDIO_URL:-}" ] && echo -e "  ${BLUE}Supabase:${NC}   ${SB_STUDIO_URL}"
-echo -e "  ${BLUE}Redis:${NC}      localhost:6379"
-echo ""
-echo -e "  Starting Next.js dev server + BullMQ worker..."
+echo -e "  ${BLUE}Queues:${NC}     Vercel Queues (runs inline with next dev)"
 echo ""
 
 # ─── Start app services ─────────────────────────────────────────────────────
-
-# Worker in background
-npx tsx src/worker.ts &
-WORKER_PID=$!
-ok "Worker started (PID: $WORKER_PID)"
 
 # Next.js in foreground (Ctrl+C stops everything via trap)
 npx next dev

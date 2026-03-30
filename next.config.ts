@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["pino", "bullmq", "ioredis"],
+  serverExternalPackages: ["pino", "ioredis"],
 
   async headers() {
     return [

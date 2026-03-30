@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "src/app/api/queues/process-transcript/route.ts": {
+      "maxDuration": 300,
+      "experimentalTriggers": [
+        { "type": "queue/v2beta", "topic": "transcript-processing" }
+      ]
+    },
+    "src/app/api/queues/create-jira/route.ts": {
+      "experimentalTriggers": [
+        { "type": "queue/v2beta", "topic": "jira-creation" }
+      ]
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/maintenance",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
