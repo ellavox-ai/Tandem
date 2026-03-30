@@ -6,6 +6,7 @@ export const assigneeSchema = z.object({
 });
 
 export const sourceQuoteSchema = z.object({
+  speaker: z.string().describe("Name of the person who said this"),
   text: z.string(),
   timestamp: z.number(),
 });
@@ -28,6 +29,9 @@ export const extractedTaskSchema = z.object({
   sourceQuotes: z.array(sourceQuoteSchema),
   priority: prioritySchema,
   labels: z.array(z.string()),
+  suggestedInterviewer: assigneeSchema
+    .nullable()
+    .describe("The meeting participant best suited to clarify this task in an interview"),
 });
 
 export const extractionOutputSchema = z.object({

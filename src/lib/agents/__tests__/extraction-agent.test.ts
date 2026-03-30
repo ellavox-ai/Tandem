@@ -101,9 +101,10 @@ describe("mapToExtractedTask", () => {
       ],
       confidence: "high" as const,
       missingContext: ["What's the deadline?"],
-      sourceQuotes: [{ text: "Alex said Friday", timestamp: 30 }],
+      sourceQuotes: [{ speaker: "Alex", text: "Alex said Friday", timestamp: 30 }],
       priority: "P1" as const,
       labels: ["backend"],
+      suggestedInterviewer: { name: "Alex", email: "alex@example.com" },
     };
 
     const result = mapToExtractedTask(input);
@@ -116,9 +117,10 @@ describe("mapToExtractedTask", () => {
       ],
       confidence: "high",
       missingContext: ["What's the deadline?"],
-      sourceQuotes: [{ text: "Alex said Friday", timestamp: 30 }],
+      sourceQuotes: [{ speaker: "Alex", text: "Alex said Friday", timestamp: 30 }],
       priority: "P1",
       labels: ["backend"],
+      suggestedInterviewer: { name: "Alex", email: "alex@example.com" },
     });
   });
 });

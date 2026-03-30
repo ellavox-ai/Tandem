@@ -50,9 +50,10 @@ export interface ExtractedTask {
   inferredAssignees: { name: string; email?: string }[];
   confidence: Confidence;
   missingContext: string[];
-  sourceQuotes: { text: string; timestamp: number }[];
+  sourceQuotes: { speaker: string; text: string; timestamp: number }[];
   priority: Priority;
   labels: string[];
+  suggestedInterviewer?: { name: string; email?: string } | null;
 }
 
 // ─── Database Row Types ─────────────────────────────────────────────────────
@@ -81,9 +82,10 @@ export interface ExtractedTaskRow {
   inferred_assignees: { name: string; email?: string }[];
   confidence: Confidence;
   missing_context: string[];
-  source_quotes: { text: string; timestamp: number }[];
+  source_quotes: { speaker?: string; text: string; timestamp: number }[];
   priority: Priority;
   labels: string[];
+  suggested_interviewer: { name: string; email?: string } | null;
   status: TaskStatus;
   claimed_by: string | null;
   claimed_at: string | null;

@@ -111,6 +111,10 @@ function parseGeminiNotes(
   const attendees = parseAttendees(raw);
   const utterances = parseTranscriptSection(raw);
 
+  resolveSpeakersToAttendees(utterances, attendees);
+
+  const summary = parseSummaryAndDetails(raw);
+
   const duration =
     utterances.length > 0
       ? utterances[utterances.length - 1].endTime
@@ -125,8 +129,48 @@ function parseGeminiNotes(
     attendees,
     utterances,
     rawFormat: "text",
-    metadata: { source: "gemini-notes", filename },
+    metadata: { source: "gemini-notes", filename, ...(summary ? { summary } : {}) },
   };
+}
+
+/**
+ * Cross-reference speaker display names from utterances with attendee
+ * entries that have emails, and populate speakerEmail on matches.
+ */
+function resolveSpeakersToAttendees(
+  utterances: Utterance[],
+  attendees: Attendee[]
+): void {
+  const emailByName = new Map<string, string>();
+  for (const a of attendees) {
+    if (a.email) {
+      emailByName.set(a.name.toLowerCase(), a.email);
+    }
+  }
+  if (emailByName.size === 0) return;
+
+  for (const utterance of utterances) {
+    const email = emailByName.get(utterance.speaker.toLowerCase());
+    if (email) {
+      utterance.speakerEmail = email;
+    }
+  }
+}
+
+/**
+ * Extract Summary and Details sections from Gemini Notes.
+ * These contain rich context with clear speaker attribution that
+ * the raw transcript lines may lack.
+ */
+function parseSummaryAndDetails(raw: string): string | null {
+  const summaryMatch = raw.match(/\nSummary\n([\s\S]*?)(?=\nDetails\n|\n📖 Transcript|\n📝)/);
+  const detailsMatch = raw.match(/\nDetails\n([\s\S]*?)(?=\n📖 Transcript|\n📝)/);
+
+  const parts: string[] = [];
+  if (summaryMatch?.[1]?.trim()) parts.push(`Summary:\n${summaryMatch[1].trim()}`);
+  if (detailsMatch?.[1]?.trim()) parts.push(`Details:\n${detailsMatch[1].trim()}`);
+
+  return parts.length > 0 ? parts.join("\n\n") : null;
 }
 
 function parseFilename(filename: string): { title: string; date: Date } {

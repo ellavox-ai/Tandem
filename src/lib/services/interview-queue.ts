@@ -39,22 +39,34 @@ function sortInterviews(
   };
 
   return tasks.sort((a, b) => {
-    // 1. User's meetings first
     if (userEmail) {
+      // 1. Suggested interviewer match (strongest signal)
+      const aIsSuggested = isSuggestedInterviewer(a, userEmail);
+      const bIsSuggested = isSuggestedInterviewer(b, userEmail);
+      if (aIsSuggested && !bIsSuggested) return -1;
+      if (!aIsSuggested && bIsSuggested) return 1;
+
+      // 2. User's meetings
       const aIsUserMeeting = isUserMeeting(a, userEmail);
       const bIsUserMeeting = isUserMeeting(b, userEmail);
       if (aIsUserMeeting && !bIsUserMeeting) return -1;
       if (!aIsUserMeeting && bIsUserMeeting) return 1;
     }
 
-    // 2. By priority
+    // 3. By priority
     const aPri = priorityOrder[a.priority] ?? 2;
     const bPri = priorityOrder[b.priority] ?? 2;
     if (aPri !== bPri) return aPri - bPri;
 
-    // 3. By recency (newest first)
+    // 4. By recency (newest first)
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
+}
+
+function isSuggestedInterviewer(task: ExtractedTaskRow, userEmail: string): boolean {
+  const si = task.suggested_interviewer;
+  if (!si?.email) return false;
+  return si.email.toLowerCase() === userEmail.toLowerCase();
 }
 
 function isUserMeeting(task: ExtractedTaskRow, userEmail: string): boolean {

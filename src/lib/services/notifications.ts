@@ -113,10 +113,11 @@ export async function notifyNewInterviews(
           text: {
             type: "mrkdwn",
             text: interviewTasks
-              .map(
-                (t) =>
-                  `• *${t.extracted_title}* (${t.confidence} confidence, ${t.priority})`
-              )
+              .map((t) => {
+                const si = t.suggested_interviewer;
+                const interviewerNote = si ? ` → suggested: *${si.name}*` : "";
+                return `• *${t.extracted_title}* (${t.confidence} confidence, ${t.priority})${interviewerNote}`;
+              })
               .join("\n"),
           },
         },

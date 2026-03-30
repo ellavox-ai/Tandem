@@ -353,13 +353,38 @@ export async function createJiraIssueWithRequirements(
   const issueUrl = `${config.baseUrl}/browse/${result.key}`;
 
   // Add watchers for additional assignees from the original task
+  const watchedEmails = new Set<string>();
+  if (requirements.assignee?.email) watchedEmails.add(requirements.assignee.email.toLowerCase());
+
   if (task.inferred_assignees?.length > 1) {
     for (const assignee of task.inferred_assignees.slice(1)) {
-      if (assignee.email) {
+      if (assignee.email && !watchedEmails.has(assignee.email.toLowerCase())) {
+        watchedEmails.add(assignee.email.toLowerCase());
         const watcherAccountId = await lookupJiraAccountId(config, assignee.email);
         if (watcherAccountId) {
           await addWatcher(config, result.key, watcherAccountId).catch((err) =>
             log.warn({ err, email: assignee.email }, "Failed to add watcher")
+          );
+        }
+      }
+    }
+  }
+
+  // Add meeting participants as watchers for visibility
+  const { data: transcript } = await supabaseAdmin
+    .from("transcripts")
+    .select("attendees")
+    .eq("id", task.transcript_id)
+    .single();
+
+  if (transcript?.attendees) {
+    for (const attendee of transcript.attendees as Array<{ name: string; email?: string }>) {
+      if (attendee.email && !watchedEmails.has(attendee.email.toLowerCase())) {
+        watchedEmails.add(attendee.email.toLowerCase());
+        const watcherAccountId = await lookupJiraAccountId(config, attendee.email);
+        if (watcherAccountId) {
+          await addWatcher(config, result.key, watcherAccountId).catch((err) =>
+            log.warn({ err, email: attendee.email }, "Failed to add meeting participant watcher")
           );
         }
       }

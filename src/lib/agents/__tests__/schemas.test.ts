@@ -15,9 +15,10 @@ const validTask = {
   inferredAssignees: [{ name: "Alex", email: "alex@example.com" }],
   confidence: "high" as const,
   missingContext: ["What's the deadline?"],
-  sourceQuotes: [{ text: "Alex said he'd ship it by Friday", timestamp: 65 }],
+  sourceQuotes: [{ speaker: "Alex", text: "Alex said he'd ship it by Friday", timestamp: 65 }],
   priority: "P1" as const,
   labels: ["backend", "integration"],
+  suggestedInterviewer: { name: "Alex", email: "alex@example.com" },
 };
 
 describe("extractionOutputSchema", () => {

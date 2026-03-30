@@ -16,22 +16,23 @@ const EXTRACTION_INSTRUCTIONS = `You are a meeting action item extractor. Analyz
 
 For each task, provide:
 - title: A concise, actionable title (imperative mood, e.g., "Ship AppFolio webhook integration")
-- description: Full context from the discussion — what was discussed, why it matters, any constraints mentioned
-- inferredAssignees: Array of people who should own this. Include name and email if identifiable. For multi-person tasks, include all people mentioned.
+- description: Full context from the discussion — what, why, constraints, and who discussed it
+- inferredAssignees: Array of people who should own this. Match speaker names to the Attendees list to include emails when possible. For multi-person tasks, include all people mentioned.
 - confidence: "high" | "medium" | "low"
   - high: Clear owner, specific deliverable, timeline mentioned (e.g., "Sean will ship the webhook by Friday")
   - medium: Action discussed but owner or scope is ambiguous (e.g., "Someone should look into the latency issue")
   - low: Vague reference to future work, no clear owner or deliverable (e.g., "We should think about scaling")
 - missingContext: Array of specific questions you couldn't answer from the transcript. Be precise — these will be asked to a human.
   Examples: "Who should own this?", "What's the deadline?", "Which service is affected?", "Is this blocked on anything?"
-- sourceQuotes: Array of relevant excerpts from the transcript with approximate timestamps. Include the most relevant 1-3 quotes.
+- sourceQuotes: Array of relevant excerpts from the transcript with approximate timestamps and the speaker name. Include the most relevant 1-3 quotes.
 - priority: "P0" (critical/urgent) | "P1" (high) | "P2" (medium/default) | "P3" (low/nice-to-have)
 - labels: Suggested categorization labels (e.g., "backend", "frontend", "infrastructure", "bug", "feature")
+- suggestedInterviewer: The meeting participant who discussed this task most and would be best suited to answer follow-up questions if clarification is needed. Include their email from the Attendees list if available. Set to null if unclear.
 
 Rules:
 - Only extract genuine action items. Skip casual conversation, jokes, and social chat.
 - If the same action item is mentioned multiple times, consolidate into a single task with the most complete context.
-- Handle noisy transcripts gracefully — speaker misattribution and filler words are common. Focus on the content, not who said it exactly.
+- Handle noisy transcripts gracefully — speaker misattribution and filler words are common, but pay attention to who proposed, volunteered for, or was assigned each task.
 - If a task references ongoing work from a previous meeting (e.g., "still working on X"), skip it unless there's a new action or change in scope.
 - Be conservative with "high" confidence — only use it when owner AND deliverable AND timeline are all clear.
 - If no action items are found, return an empty tasks array.`;
@@ -56,11 +57,15 @@ export async function extractTasks(
     contextBlock = `\n\nExisting Jira tasks from recent/recurring meetings (skip if already tracked):\n${existingJiraTasks.map((t) => `- ${t.key}: ${t.summary}`).join("\n")}\n`;
   }
 
+  const summaryBlock = transcript.metadata?.summary
+    ? `\n--- MEETING SUMMARY ---\n${transcript.metadata.summary}\n--- END SUMMARY ---\n`
+    : "";
+
   const userMessage = `Meeting: ${transcript.meetingTitle}
 Date: ${transcript.meetingDate.toISOString()}
 Attendees: ${transcript.attendees.map((a) => a.name + (a.email ? ` <${a.email}>` : "")).join(", ")}
 Duration: ${Math.round(transcript.duration / 60)} minutes
-${contextBlock}
+${contextBlock}${summaryBlock}
 --- TRANSCRIPT ---
 ${formattedTranscript}
 --- END TRANSCRIPT ---
@@ -107,6 +112,7 @@ export function mapToExtractedTask(
     sourceQuotes: item.sourceQuotes,
     priority: item.priority,
     labels: item.labels,
+    suggestedInterviewer: item.suggestedInterviewer ?? null,
   };
 }
 
@@ -156,6 +162,7 @@ export async function storeAndRouteExtractedTasks(
         source_quotes: task.sourceQuotes,
         priority: task.priority,
         labels: task.labels,
+        suggested_interviewer: task.suggestedInterviewer ?? null,
         status,
       })
       .select("id")

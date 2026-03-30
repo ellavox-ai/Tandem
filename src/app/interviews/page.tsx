@@ -16,13 +16,14 @@ interface Task {
   confidence: string;
   priority: string;
   missing_context: string[];
-  source_quotes: Array<{ text: string; timestamp: number }>;
+  source_quotes: Array<{ speaker?: string; text: string; timestamp: number }>;
   labels: string[];
   status: string;
   claimed_by: string | null;
   claim_expires_at: string | null;
   interview_responses: Record<string, string> | null;
   inferred_assignees: Array<{ name: string; email?: string }>;
+  suggested_interviewer: { name: string; email?: string } | null;
   created_at: string;
   transcript?: {
     id: string;
@@ -343,6 +344,11 @@ export default function InterviewsPage() {
                 from {chatTask.transcript.meeting_title}
               </span>
             )}
+            {chatTask.suggested_interviewer && (
+              <span className="text-[11px] text-[var(--accent)]">
+                suggested: {chatTask.suggested_interviewer.name}
+              </span>
+            )}
           </div>
           <p className="mt-1.5 text-[13px] text-[var(--foreground-secondary)] leading-relaxed">
             {chatTask.extracted_description}
@@ -480,6 +486,11 @@ export default function InterviewsPage() {
 
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 mb-6">
           <h2 className="text-[15px] font-semibold">{activeInterview.extracted_title}</h2>
+          {activeInterview.suggested_interviewer && (
+            <p className="mt-1 text-[11px] text-[var(--accent)]">
+              Suggested interviewer: {activeInterview.suggested_interviewer.name}
+            </p>
+          )}
           <p className="mt-2 text-[13px] text-[var(--foreground-secondary)] leading-relaxed">
             {activeInterview.extracted_description}
           </p>
@@ -494,6 +505,9 @@ export default function InterviewsPage() {
                   key={i}
                   className="border-l-2 border-[var(--accent)] pl-3 py-1 my-2 text-[13px] italic text-[var(--foreground-secondary)]"
                 >
+                  {q.speaker && (
+                    <span className="not-italic font-medium text-[var(--foreground)]">{q.speaker}: </span>
+                  )}
                   &ldquo;{q.text}&rdquo;
                 </blockquote>
               ))}
@@ -607,12 +621,20 @@ export default function InterviewsPage() {
                       </>
                     )}
                   </div>
-                  <div className="mt-2 flex gap-1.5">
+                  <div className="mt-2 flex gap-1.5 items-center flex-wrap">
                     <ConfidenceDot confidence={task.confidence} />
                     <PriorityDot priority={task.priority} />
                     <span className="text-[10px] text-[var(--foreground-tertiary)] ml-1">
                       {task.missing_context?.length || 0} questions
                     </span>
+                    {task.suggested_interviewer && (
+                      <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-[var(--accent-muted)] text-[var(--accent)]">
+                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        {task.suggested_interviewer.name}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-1.5 shrink-0">
@@ -748,6 +770,11 @@ function VoiceInterviewView({
           {task.transcript && (
             <span className="text-[11px] text-[var(--foreground-tertiary)]">
               from {task.transcript.meeting_title}
+            </span>
+          )}
+          {task.suggested_interviewer && (
+            <span className="text-[11px] text-[var(--accent)]">
+              suggested: {task.suggested_interviewer.name}
             </span>
           )}
         </div>
