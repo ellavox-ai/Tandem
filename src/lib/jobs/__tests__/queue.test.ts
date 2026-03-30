@@ -14,6 +14,8 @@ import { getRedisConnection, enqueueTranscriptProcessing, enqueueJiraCreation } 
 
 describe("getRedisConnection", () => {
   it("returns default host and port when env not set", () => {
+    delete process.env.REDIS_URL;
+    delete process.env.tandem_REDIS_URL;
     delete process.env.REDIS_HOST;
     delete process.env.REDIS_PORT;
 
@@ -23,6 +25,8 @@ describe("getRedisConnection", () => {
   });
 
   it("reads host and port from env", () => {
+    delete process.env.REDIS_URL;
+    delete process.env.tandem_REDIS_URL;
     process.env.REDIS_HOST = "redis.example.com";
     process.env.REDIS_PORT = "6380";
 
