@@ -4,10 +4,10 @@ import {
   levenshteinDistance,
   levenshteinSimilarity,
   mapPriority,
-  getJiraConfig,
   buildRequirementsAdf,
   buildLegacyAdf,
-} from "../jira";
+} from "@/lib/issue-tracker/jira/jira-helpers";
+import { JiraProvider } from "@/lib/issue-tracker/jira/jira-provider";
 
 vi.mock("@/lib/supabase", () => ({
   supabaseAdmin: { from: vi.fn() },
@@ -16,6 +16,10 @@ vi.mock("@/lib/supabase", () => ({
 vi.mock("@/lib/agents/requirements-agent", () => ({
   refineRequirements: vi.fn(),
 }));
+
+function getJiraConfig() {
+  return new JiraProvider().getConfig();
+}
 
 describe("normalizeString", () => {
   it("lowercases and strips punctuation", () => {

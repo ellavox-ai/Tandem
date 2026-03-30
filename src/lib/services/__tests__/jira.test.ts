@@ -1,5 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
+const { mockCreateIssue, mockRetryFailed, mockCheckDuplicates } = vi.hoisted(() => ({
+  mockCreateIssue: vi.fn(),
+  mockRetryFailed: vi.fn(),
+  mockCheckDuplicates: vi.fn(),
+}));
+
+vi.mock("@/lib/issue-tracker", () => ({
+  getIssueTracker: vi.fn().mockReturnValue({
+    createIssue: mockCreateIssue,
+    retryFailedIssue: mockRetryFailed,
+    checkForDuplicates: mockCheckDuplicates,
+  }),
+}));
+
 const { mockFrom } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
 }));
@@ -9,25 +23,16 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 vi.mock("@/lib/agents/requirements-agent", () => ({
-  refineRequirements: vi.fn().mockResolvedValue({
-    title: "Refined Task",
-    issueType: "Task",
-    description: "Refined description",
-    acceptanceCriteria: ["AC1"],
-    priority: "P1",
-    labels: ["backend"],
-    assignee: null,
-  }),
+  refineRequirements: vi.fn(),
 }));
 
 import {
   createJiraIssue,
+  createJiraIssueWithRequirements,
   retryJiraCreation,
   checkForDuplicates,
 } from "../jira";
 import type { ExtractedTaskRow } from "@/lib/types";
-
-const mockFetch = vi.fn();
 
 function makeTask(overrides: Partial<ExtractedTaskRow> = {}): ExtractedTaskRow {
   return {
@@ -57,194 +62,97 @@ function makeTask(overrides: Partial<ExtractedTaskRow> = {}): ExtractedTaskRow {
   };
 }
 
-describe("createJiraIssue", () => {
-  const originalEnv = { ...process.env };
-
+describe("jira facade", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    globalThis.fetch = mockFetch;
-    process.env.JIRA_BASE_URL = "https://test.atlassian.net";
-    process.env.JIRA_EMAIL = "test@example.com";
-    process.env.JIRA_API_TOKEN = "test-token";
-    process.env.JIRA_DEFAULT_PROJECT = "TEST";
-
-    mockFrom.mockReturnValue({
-      update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockResolvedValue({ error: null }),
-      }),
-    });
   });
 
-  afterEach(() => {
-    process.env = { ...originalEnv };
-  });
-
-  it("creates a Jira issue and returns key + URL", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({ key: "TEST-1", self: "..." }),
-    });
-
-    const result = await createJiraIssue(makeTask());
-
-    expect(result.issueKey).toBe("TEST-1");
-    expect(result.issueUrl).toBe("https://test.atlassian.net/browse/TEST-1");
-    expect(mockFetch).toHaveBeenCalledWith(
-      "https://test.atlassian.net/rest/api/3/issue",
-      expect.objectContaining({ method: "POST" })
-    );
-  });
-
-  it("throws when Jira config is missing", async () => {
-    delete process.env.JIRA_BASE_URL;
-
-    await expect(createJiraIssue(makeTask())).rejects.toThrow("JIRA_BASE_URL");
-  });
-
-  it("throws when Jira API returns non-OK", async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      status: 400,
-      text: vi.fn().mockResolvedValue("Bad Request"),
-    });
-
-    await expect(createJiraIssue(makeTask())).rejects.toThrow("Jira API error 400");
-  });
-
-  it("creates without assignee when lookup fails", async () => {
-    const task = makeTask({
-      inferred_assignees: [{ name: "Alex", email: "alex@example.com" }],
-    });
-
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValue({ key: "TEST-2", self: "..." }),
+  describe("createJiraIssue", () => {
+    it("delegates to getIssueTracker().createIssue", async () => {
+      mockCreateIssue.mockResolvedValue({
+        issueKey: "TEST-1",
+        issueUrl: "https://test.atlassian.net/browse/TEST-1",
+        refinedTitle: "Refined",
       });
 
-    const result = await createJiraIssue(task);
-    expect(result.issueKey).toBe("TEST-2");
-  });
-});
+      const task = makeTask();
+      const result = await createJiraIssue(task, "TEST");
 
-describe("retryJiraCreation", () => {
-  const originalEnv = { ...process.env };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    globalThis.fetch = mockFetch;
-    process.env.JIRA_BASE_URL = "https://test.atlassian.net";
-    process.env.JIRA_EMAIL = "test@example.com";
-    process.env.JIRA_API_TOKEN = "test-token";
+      expect(mockCreateIssue).toHaveBeenCalledWith(task, "TEST");
+      expect(result.issueKey).toBe("TEST-1");
+    });
   });
 
-  afterEach(() => {
-    process.env = { ...originalEnv };
-  });
+  describe("createJiraIssueWithRequirements", () => {
+    it("delegates task row to getIssueTracker().createIssue", async () => {
+      mockCreateIssue.mockResolvedValue({
+        issueKey: "TEST-2",
+        issueUrl: "https://test.atlassian.net/browse/TEST-2",
+        refinedTitle: "Refined Title",
+      });
 
-  it("throws when task not in jira_failed status", async () => {
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({
-            data: { id: "task-1", status: "completed" },
-            error: null,
+      const task = makeTask();
+      const result = await createJiraIssueWithRequirements(task, "TEST");
+
+      expect(mockCreateIssue).toHaveBeenCalledWith(task, "TEST");
+      expect(result.refinedTitle).toBe("Refined Title");
+    });
+
+    it("fetches task from DB when given a string ID", async () => {
+      const task = makeTask();
+      mockFrom.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: task, error: null }),
           }),
         }),
-      }),
+      });
+
+      mockCreateIssue.mockResolvedValue({
+        issueKey: "TEST-3",
+        issueUrl: "https://test.atlassian.net/browse/TEST-3",
+        refinedTitle: "From ID",
+      });
+
+      const result = await createJiraIssueWithRequirements("task-1", "TEST");
+      expect(result.issueKey).toBe("TEST-3");
     });
 
-    await expect(retryJiraCreation("task-1")).rejects.toThrow("not in jira_failed");
-  });
-
-  it("throws when task not found", async () => {
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({ data: null, error: { message: "not found" } }),
+    it("throws when task not found by ID", async () => {
+      mockFrom.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: null, error: { message: "not found" } }),
+          }),
         }),
-      }),
+      });
+
+      await expect(createJiraIssueWithRequirements("nonexistent")).rejects.toThrow("Task not found");
     });
-
-    await expect(retryJiraCreation("nonexistent")).rejects.toThrow("Task not found");
-  });
-});
-
-describe("checkForDuplicates", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    globalThis.fetch = mockFetch;
   });
 
-  it("finds similar issues above 0.7 threshold", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({
-        issues: [
-          { key: "TEST-1", fields: { summary: "Ship webhook integration" } },
-          { key: "TEST-2", fields: { summary: "Completely different task" } },
-        ],
-      }),
+  describe("retryJiraCreation", () => {
+    it("delegates to getIssueTracker().retryFailedIssue", async () => {
+      mockRetryFailed.mockResolvedValue({
+        issueKey: "TEST-4",
+        issueUrl: "https://test.atlassian.net/browse/TEST-4",
+      });
+
+      const result = await retryJiraCreation("task-1");
+      expect(mockRetryFailed).toHaveBeenCalledWith("task-1");
+      expect(result.issueKey).toBe("TEST-4");
     });
-
-    const config = {
-      baseUrl: "https://test.atlassian.net",
-      email: "test@example.com",
-      apiToken: "token",
-      defaultProject: "TEST",
-    };
-
-    const result = await checkForDuplicates(
-      config,
-      "Ship webhook integration",
-      "TEST"
-    );
-
-    expect(result.length).toBeGreaterThanOrEqual(1);
-    expect(result[0].similarity).toBeGreaterThan(0.7);
   });
 
-  it("returns empty array when no matches", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({
-        issues: [
-          { key: "TEST-1", fields: { summary: "Completely unrelated item" } },
-        ],
-      }),
+  describe("checkForDuplicates", () => {
+    it("delegates to getIssueTracker().checkForDuplicates", async () => {
+      mockCheckDuplicates.mockResolvedValue([
+        { key: "TEST-1", summary: "Ship webhook", similarity: 0.95 },
+      ]);
+
+      const result = await checkForDuplicates(null, "Ship webhook", "TEST", 7);
+      expect(mockCheckDuplicates).toHaveBeenCalledWith("Ship webhook", "TEST", 7);
+      expect(result).toHaveLength(1);
     });
-
-    const config = {
-      baseUrl: "https://test.atlassian.net",
-      email: "test@example.com",
-      apiToken: "token",
-      defaultProject: "TEST",
-    };
-
-    const result = await checkForDuplicates(
-      config,
-      "Add retry logic to webhook pipeline",
-      "TEST"
-    );
-
-    expect(result).toEqual([]);
-  });
-
-  it("returns empty array when API fails", async () => {
-    mockFetch.mockResolvedValue({ ok: false, status: 500 });
-
-    const config = {
-      baseUrl: "https://test.atlassian.net",
-      email: "test@example.com",
-      apiToken: "token",
-      defaultProject: "TEST",
-    };
-
-    const result = await checkForDuplicates(config, "Some task", "TEST");
-    expect(result).toEqual([]);
   });
 });

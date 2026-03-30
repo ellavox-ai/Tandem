@@ -9,8 +9,14 @@ vi.mock("@/lib/supabase", () => ({
   supabaseAdmin: { from: mockFrom },
 }));
 
-vi.mock("@/lib/services/jira", () => ({
-  createJiraIssueWithRequirements: vi.fn(),
+const { mockCreateIssue } = vi.hoisted(() => ({
+  mockCreateIssue: vi.fn(),
+}));
+
+vi.mock("@/lib/issue-tracker", () => ({
+  getIssueTracker: vi.fn().mockReturnValue({
+    createIssue: mockCreateIssue,
+  }),
 }));
 
 vi.mock("@/lib/agents/routing-agent", () => ({
@@ -18,7 +24,6 @@ vi.mock("@/lib/agents/routing-agent", () => ({
 }));
 
 import { POST } from "../../tasks/[id]/push-jira/route";
-import { createJiraIssueWithRequirements } from "@/lib/services/jira";
 
 describe("POST /api/tasks/:id/push-jira", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -45,7 +50,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       }),
     });
 
-    vi.mocked(createJiraIssueWithRequirements).mockResolvedValue({
+    mockCreateIssue.mockResolvedValue({
       issueKey: "ENG-1",
       issueUrl: "https://test.atlassian.net/browse/ENG-1",
       refinedTitle: "Refined",
@@ -142,7 +147,7 @@ describe("POST /api/tasks/:id/push-jira", () => {
       }),
     });
 
-    vi.mocked(createJiraIssueWithRequirements).mockRejectedValue(new Error("Jira API error"));
+    mockCreateIssue.mockRejectedValue(new Error("Jira API error"));
 
     const response = await POST(makeRequest(), {
       params: Promise.resolve({ id: "task-1" }),

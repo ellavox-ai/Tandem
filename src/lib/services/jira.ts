@@ -19,10 +19,10 @@ export {
   levenshteinDistance,
 } from "@/lib/issue-tracker/jira/jira-helpers";
 
-export { JiraProvider } from "@/lib/issue-tracker/jira/jira-provider";
+import { JiraProvider } from "@/lib/issue-tracker/jira/jira-provider";
+export { JiraProvider };
 
 export function getJiraConfig() {
-  const { JiraProvider } = require("@/lib/issue-tracker/jira/jira-provider") as typeof import("@/lib/issue-tracker/jira/jira-provider");
   return new JiraProvider().getConfig();
 }
 

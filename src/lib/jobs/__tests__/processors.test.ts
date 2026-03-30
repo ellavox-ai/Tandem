@@ -29,11 +29,13 @@ vi.mock("@/lib/services/extraction", () => ({
   storeAndRouteExtractedTasks: vi.fn().mockResolvedValue([]),
 }));
 
-vi.mock("@/lib/services/jira", () => ({
-  createJiraIssueWithRequirements: vi.fn().mockResolvedValue({
-    issueKey: "ENG-1",
-    issueUrl: "https://test.atlassian.net/browse/ENG-1",
-    refinedTitle: "Refined Title",
+vi.mock("@/lib/issue-tracker", () => ({
+  getIssueTracker: vi.fn().mockReturnValue({
+    createIssue: vi.fn().mockResolvedValue({
+      issueKey: "ENG-1",
+      issueUrl: "https://test.atlassian.net/browse/ENG-1",
+      refinedTitle: "Refined Title",
+    }),
   }),
 }));
 
